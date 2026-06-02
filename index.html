@@ -129,7 +129,9 @@
       font-size: 1.2rem;
     }
     .brand-title { font-size: 1rem; letter-spacing: 2px; }
-    .brand-subtitle { font-size: 0.74rem; color: var(--muted); letter-spacing: 1px; }
+    .brand-subtitle { font-size: 0.74rem; color: var(--muted); letter-spacing: 1px; transition: color 0.3s ease; }
+    .brand-subtitle.local { color: #ffe08a; }
+    .brand-subtitle.cloud { color: #9de8ff; }
 
     .top-actions {
       display: flex; gap: 10px; align-items: center; pointer-events: auto;
@@ -274,17 +276,7 @@
       background: rgba(140,183,255,0.12); border: 1px solid rgba(140,183,255,0.24);
       color: #dbe7ff; font-size: 0.84rem; letter-spacing: 1px;
     }
-    .progress-steps {
-      width: 100%; display: grid; grid-template-columns: repeat(4,1fr); gap: 8px;
-    }
-    .step-chip {
-      padding: 10px 8px; text-align: center; border-radius: 14px;
-      font-size: 0.77rem; letter-spacing: 0.5px; color: var(--muted);
-      border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);
-      transition: all 0.28s ease;
-    }
-    .step-chip.active { color: #fff; border-color: rgba(140,183,255,0.28); background: rgba(140,183,255,0.14); transform: translateY(-2px); }
-    .step-chip.done { color: #b9ffe3; border-color: rgba(126,240,192,0.22); background: rgba(126,240,192,0.12); }
+
 
     .gesture-hint {
       color: var(--muted); font-size: 0.84rem; text-align: center;
@@ -481,7 +473,9 @@
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: 28px; box-shadow: var(--shadow); overflow: hidden;
     }
-    .modal-shell { padding: 24px 20px 22px; overflow-y: auto; max-height: min(84vh, 780px); }
+    .modal-shell { padding: 24px 20px 22px; overflow-y: auto; max-height: min(84vh, 780px); display: flex; flex-direction: column; align-items: center; }
+    .modal-shell .modal-head { width: 100%; }
+    .modal-shell .collection-summary { width: 100%; }
     .modal-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
     .modal-title { font-size: 1.35rem; letter-spacing: 2px; }
     .close-btn {
@@ -495,8 +489,9 @@
        ============================================================ */
     .zodiac-grid {
       display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;
-      overflow-y: auto; max-height: 52vh; padding-right: 2px;
+      overflow-y: auto; max-height: 52vh; padding: 0 2px;
       grid-auto-rows: 1fr; align-items: stretch;
+      margin: 0 auto; width: 100%;
     }
     .zodiac-item {
       aspect-ratio: 1/1; min-width: 0; min-height: 0; border-radius: 18px;
@@ -660,14 +655,12 @@
       body { align-items: flex-start; padding-top: calc(var(--safe-top) + 140px); }
       .top-bar { flex-direction: column; align-items: stretch; gap: 10px; }
       .brand, .top-actions { width: 100%; }
-      .top-actions { justify-content: space-between; gap: 8px; }
-      .top-actions > * { flex: 1 1 calc(50% - 8px); min-width: 0; }
-      .top-actions #mode-badge { flex-basis: 100%; text-align: center; }
-      .display-toggle, .chip-btn { justify-content: center; width: 100%; }
+      .top-actions { justify-content: flex-end; gap: 8px; }
+      .top-actions > * { min-width: 0; }
+      .display-toggle, .chip-btn { justify-content: center; }
       #ui-container { width: 100%; border-radius: 24px; padding: 22px 16px 18px; }
       .brand-title { font-size: 0.95rem; }
       .brand-subtitle { font-size: 0.7rem; }
-      .progress-steps { grid-template-columns: repeat(2,1fr); }
       .orb-ring { width: 154px; height: 154px; }
       #center-icon { font-size: 4.1rem; }
       #status-text { min-height: 66px; font-size: 0.95rem; }
@@ -721,11 +714,10 @@
       <div class="brand-mark">✦</div>
       <div>
         <div class="brand-title">星軌校準法杖</div>
-        <div class="brand-subtitle">登入收藏版・可串接 Supabase</div>
+        <div class="brand-subtitle" id="mode-badge">本機收藏模式</div>
       </div>
     </div>
     <div class="top-actions">
-      <span id="mode-badge" class="chip local">本機收藏模式</span>
       <!-- 圖片 / emoji 切換 -->
       <button id="display-toggle-btn" class="display-toggle" title="切換顯示模式">
         <span class="toggle-dot"></span>
@@ -755,12 +747,6 @@
 
   <!-- ★ 主操作介面 -->
   <div id="ui-container">
-    <div class="progress-steps" id="progress-steps">
-      <div class="step-chip active" data-step="login">登入</div>
-      <div class="step-chip" data-step="invoke">呼喚</div>
-      <div class="step-chip" data-step="gesture">軌跡</div>
-      <div class="step-chip" data-step="scratch">收卡</div>
-    </div>
     <div class="spell-badge" id="spell-badge">星軌待命中</div>
     <div class="orb-ring">
       <div id="center-icon">✨</div>
@@ -768,7 +754,7 @@
     <button id="magic-btn">啟動</button>
     <div id="status-text">請先登入，讓旅人的名字寫入星圖，再喚醒你的元素印記。</div>
     <div class="gesture-hint" id="gesture-hint">登入後，先說出元素，再將手機畫出對應動作；不支援語音時會自動開啟元素選單。</div>
-    <div class="meter-wrap">
+    <div class="meter-wrap" id="motion-meter-wrap" style="display:none;">
       <div class="meter-label-row">
         <span>動作蓄能</span>
         <span id="motion-meter-text">0 / 4</span>
@@ -1806,6 +1792,9 @@ create table if not exists public.zodiac_assets (
       ritualCopy.textContent = element.ritualLine;
       motionHintText.textContent = '等待動作';
 
+      // 顯示動作蓄能條
+      document.getElementById('motion-meter-wrap').style.display = '';
+
       if (navigator.vibrate) navigator.vibrate(100);
     }
 
@@ -1822,6 +1811,7 @@ create table if not exists public.zodiac_assets (
       state.motionEnabled = false;
       state.gyroEnabled = false;
       updateMotionMeter(MOTION_CONFIG.stepsRequired);
+      document.getElementById('motion-meter-wrap').style.display = 'none';
       if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 300]);
 
       const element = elementZodiacs[state.currentElement];
@@ -1887,6 +1877,8 @@ create table if not exists public.zodiac_assets (
       state.isSaved = false;
       state.isSpellCharged = false;
       clearMotionState();
+      // 隱藏動作蓄能條
+      document.getElementById('motion-meter-wrap').style.display = 'none';
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       // 重置感測器狀態，讓下次點擊啟動時由 initMotionSensor() 重新初始化
       state.motionPermissionAsked = false;
@@ -1987,8 +1979,8 @@ create table if not exists public.zodiac_assets (
     function updateModeUI(mode) {
       const isCloud = mode === 'cloud';
       modeBadge.textContent = isCloud ? 'Supabase 雲端同步' : '本機收藏模式';
-      modeBadge.classList.toggle('cloud', isCloud);
-      modeBadge.classList.toggle('local', !isCloud);
+      modeBadge.classList.remove('cloud', 'local');
+      modeBadge.classList.add(isCloud ? 'cloud' : 'local');
       storageLabelEl.textContent = isCloud ? '雲端' : '本機';
       syncStatusEl.textContent = isCloud
         ? '已啟用雲端資料庫，可跨裝置同步參展者帳號與收藏卡牌。'
