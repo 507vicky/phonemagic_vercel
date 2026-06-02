@@ -2291,36 +2291,39 @@ create table if not exists public.zodiac_assets (
   /* ================================================================
      事件綁定
   ================================================================ */
-    btn.addEventListener('click', async () => {
+    btn.addEventListener('click', () => {
       if (!state.currentUser) { openAuthModal(); setAuthMessage('請先登入或註冊，再開始收集卡牌。', 'error'); return; }
 
-      // ── iOS 必須在 click 同步路徑直接呼叫 requestPermission ──
-      // 不能放進 async function 裡 await，否則 iOS 視為非使用者手勢
-      if (!state.motionPermissionAsked) {
-        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-          try {
-            const p = await DeviceMotionEvent.requestPermission();
-            state.iosMotionGranted = (p === 'granted');
-          } catch(e) { state.iosMotionGranted = false; console.warn('motion permission:', e); }
-        } else {
-          state.iosMotionGranted = true; // Android / desktop 直接允許
-        }
-        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-          try {
-            const p = await DeviceOrientationEvent.requestPermission();
-            state.iosGyroGranted = (p === 'granted');
-          } catch(e) { state.iosGyroGranted = false; console.warn('gyro permission:', e); }
-        } else {
-          state.iosGyroGranted = true;
-        }
-        state.motionPermissionAsked = true;
-        attachMotionListeners(); // 依據 granted 結果綁定監聽器
-      }
-
+      // ── iOS 必須在 click 同步路徑、任何 await 之前呼叫 recognition.start() ──
+      // 語音辨識優先：同步觸發，確保 iOS 視為合法使用者手勢
       if (recognition) {
         try { recognition.start(); } catch(e) { console.warn(e); }
       } else {
         openElementModal();
+      }
+
+      // ── Motion permission 在語音啟動後非同步處理，不影響語音的使用者手勢鏈 ──
+      if (!state.motionPermissionAsked) {
+        (async () => {
+          if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+            try {
+              const p = await DeviceMotionEvent.requestPermission();
+              state.iosMotionGranted = (p === 'granted');
+            } catch(e) { state.iosMotionGranted = false; console.warn('motion permission:', e); }
+          } else {
+            state.iosMotionGranted = true; // Android / desktop 直接允許
+          }
+          if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            try {
+              const p = await DeviceOrientationEvent.requestPermission();
+              state.iosGyroGranted = (p === 'granted');
+            } catch(e) { state.iosGyroGranted = false; console.warn('gyro permission:', e); }
+          } else {
+            state.iosGyroGranted = true;
+          }
+          state.motionPermissionAsked = true;
+          attachMotionListeners(); // 依據 granted 結果綁定監聽器
+        })();
       }
     });
 
