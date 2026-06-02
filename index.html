@@ -191,8 +191,12 @@
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.08);
       box-shadow: var(--shadow);
-      transition: opacity 0.5s ease;
+      transition: opacity 0.5s ease, gap 0.3s ease;
       margin: 0 auto;
+    }
+    /* 動作辨識激活時縮小間距 */
+    #ui-container.gesture-active {
+      gap: 8px;
     }
 
     /* ============================================================
@@ -721,7 +725,7 @@
       <!-- 圖片 / emoji 切換 -->
       <button id="display-toggle-btn" class="display-toggle" title="切換顯示模式">
         <span class="toggle-dot"></span>
-        <span id="display-mode-label">emoji 模式</span>
+        <span id="display-mode-label">圖片模式</span>
       </button>
       <!-- 登入前顯示「登入」，登入後顯示頭像按鈕 -->
       <button id="auth-open-btn" class="chip-btn">登入／註冊</button>
@@ -1023,75 +1027,115 @@ create table if not exists public.zodiac_assets (
 
     const allZodiacs = Object.keys(ZODIAC_DATA);
 
-  /* ┌─────────────────────────────────────────────────────────────┐
-     │  ★ 區塊 4：四大元素設定                                     │
-     │  可修改：name/icon/gradient/spellHint/ritualTitle/          │
-     │          ritualLine/releaseText/aliases/zodiacs             │
-     └─────────────────────────────────────────────────────────────┘ */
+  /* ╔═══════════════════════════════════════════════════════════════╗
+     ║  ★ 區塊 4：四大元素設定  ← 咒語內容主要改這裡                   
+     ║                                                              
+     ║  每個元素可自由修改的欄位：                                     
+     ║  ┌──────────────┬──────────────────────────────────────────┐ 
+     ║  │ name         │ 元素序列名稱（顯示在 badge 上）         
+     ║  │ spellHint    │ 語音辨識前的提示文字                   
+     ║  │ ritualTitle  │ 元素啟動後的主標語（粗體儀式感文字）   
+     ║  │ ritualLine   │ 動作說明（「請做這個動作」的引導文）    
+     ║  │ releaseText  │ 魔法釋放後、刮刮樂前的提示文字           
+     ║  │ motionHint   │ 動作蓄能時顯示的簡短提示                
+     ║  │ aliases      │ 語音辨識關鍵字（說這些詞會觸發此元素）   
+     ║  │ zodiacs      │ 這個元素抽到的星座（隨機選一個）         
+     ║  └──────────────┴──────────────────────────────────────────┘ 
+     ╚═══════════════════════════════════════════════════════════════╝ */
     const elementZodiacs = {
+
+      // ┌─────────────────────────────────────────────────────────┐
+      // │  🔥  火元素 ── 焰星序列                                  │
+      // └─────────────────────────────────────────────────────────┘
       fire: {
         key: 'fire',
-        name: '焰星序列',
+        name: '焰星序列',            // ← 元素序列名稱
         icon: '🔥',
         color: 'rgba(222, 87, 33, 0.72)',
         gradient: ['#ff7a18', '#ffb347'],
-        // ─ 咒語文字（可自由修改） ─
-        spellHint: '請吟誦「焰」或火象星座之名',
+        // ── 咒語文字（可自由修改） ──────────────────────────────
+        spellHint:   '請吟誦「焰」或火象星座之名',
         ritualTitle: '灼光巡行，熾焰應誓。',
-        ritualLine: '焰脈已點燃。手持法杖，突然垂直向上高舉過頭，在最高點停頓一瞬間。',
+        ritualLine:  '焰脈已點燃。手持法杖，突然垂直向上高舉過頭，在最高點停頓一瞬間。',
         releaseText: '火象星圖已鬆動，抹去封印即可收下你的焰系卡牌。',
-        // ─ 動作引導提示 ─
-        motionHint: '🔥 快速向上高舉法杖，在最高點停頓！',
+        // ── 動作蓄能提示 ────────────────────────────────────────
+        motionHint:  '🔥 快速向上高舉法杖，在最高點停頓！',
         motionClass: 'hint-fire',
-        // ─ 語音辨識關鍵字 ─
+        // ── 語音辨識關鍵字（說出以下任一詞觸發） ──────────────
         aliases: ['火', '焰', '牡羊', '獅子', '射手'],
+        // ── 可抽到的星座（隨機選一個） ─────────────────────────
         zodiacs: ['牡羊座', '獅子座', '射手座']
       },
+
+      // ┌─────────────────────────────────────────────────────────┐
+      // │  💧  水元素 ── 潮星序列                                  │
+      // └─────────────────────────────────────────────────────────┘
       water: {
         key: 'water',
-        name: '潮星序列',
+        name: '潮星序列',            // ← 元素序列名稱
         icon: '💧',
         color: 'rgba(52, 118, 222, 0.70)',
         gradient: ['#2193b0', '#6dd5ed'],
-        spellHint: '請吟誦「潮」或水象星座之名',
+        // ── 咒語文字（可自由修改） ──────────────────────────────
+        spellHint:   '請吟誦「潮」或水象星座之名',
         ritualTitle: '潮聲回應，深海立誓。',
-        ritualLine: '潮汐已與你共鳴。手臂放鬆，在前方空中緩慢劃出一個巨大的 ∞ 字型。',
+        ritualLine:  '潮汐已與你共鳴。手臂放鬆，在前方空中緩慢劃出一個巨大的 ∞ 字型。',
         releaseText: '水象星圖已甦醒，刮開星霧後將直接寫入你的收藏檔案。',
-        motionHint: '💧 緩慢左右擺動法杖，畫出 ∞ 的波浪軌跡。',
+        // ── 動作蓄能提示 ────────────────────────────────────────
+        motionHint:  '💧 緩慢左右擺動法杖，畫出 ∞ 的波浪軌跡。',
         motionClass: 'hint-water',
+        // ── 語音辨識關鍵字 ──────────────────────────────────────
         aliases: ['水', '潮', '巨蟹', '天蠍', '雙魚'],
+        // ── 可抽到的星座 ─────────────────────────────────────────
         zodiacs: ['巨蟹座', '天蠍座', '雙魚座']
       },
+
+      // ┌─────────────────────────────────────────────────────────┐
+      // │  🌪️  風元素 ── 嵐星序列                                  │
+      // └─────────────────────────────────────────────────────────┘
       wind: {
         key: 'wind',
-        name: '嵐星序列',
+        name: '嵐星序列',            // ← 元素序列名稱
         icon: '🌪️',
         color: 'rgba(33, 178, 143, 0.68)',
         gradient: ['#11998e', '#38ef7d'],
-        spellHint: '請吟誦「嵐」或風象星座之名',
+        // ── 咒語文字（可自由修改） ──────────────────────────────
+        spellHint:   '請吟誦「嵐」或風象星座之名',
         ritualTitle: '風紋振翼，流界共鳴。',
-        ritualLine: '嵐紋已甦醒。手臂向前，手持法杖在頭頂或胸前快速左右橫掃，引導氣流匯聚。',
+        ritualLine:  '嵐紋已甦醒。手臂向前，手持法杖在頭頂或胸前快速左右橫掃，引導氣流匯聚。',
         releaseText: '風象印記正在成形，抹去薄霧即可取得你的氣流卡牌。',
-        motionHint: '🌪️ 快速左右橫掃法杖，引導氣流！',
+        // ── 動作蓄能提示 ────────────────────────────────────────
+        motionHint:  '🌪️ 快速左右橫掃法杖，引導氣流！',
         motionClass: 'hint-wind',
+        // ── 語音辨識關鍵字 ──────────────────────────────────────
         aliases: ['風', '嵐', '雙子', '天秤', '水瓶'],
+        // ── 可抽到的星座 ─────────────────────────────────────────
         zodiacs: ['雙子座', '天秤座', '水瓶座']
       },
+
+      // ┌─────────────────────────────────────────────────────────┐
+      // │  🌍  土元素 ── 岩星序列                                  │
+      // └─────────────────────────────────────────────────────────┘
       earth: {
         key: 'earth',
-        name: '岩星序列',
+        name: '岩星序列',            // ← 元素序列名稱
         icon: '🌍',
         color: 'rgba(132, 104, 64, 0.72)',
         gradient: ['#614385', '#516395'],
-        spellHint: '請吟誦「岩」或土象星座之名',
+        // ── 咒語文字（可自由修改） ──────────────────────────────
+        spellHint:   '請吟誦「岩」或土象星座之名',
         ritualTitle: '岩脈低鳴，大地見證。',
-        ritualLine: '岩脈已與你對頻。高舉法杖，由上往下猛力劈下，在腰部位置驟然急停。',
+        ritualLine:  '岩脈已與你對頻。高舉法杖，由上往下猛力劈下，在腰部位置驟然急停。',
         releaseText: '土象封印正在崩解，抹去表層後即可鎖定你的地脈卡牌。',
-        motionHint: '⛰️ 由上往下猛劈法杖，在腰部急停！',
+        // ── 動作蓄能提示 ────────────────────────────────────────
+        motionHint:  '⛰️ 由上往下猛劈法杖，在腰部急停！',
         motionClass: 'hint-earth',
+        // ── 語音辨識關鍵字 ──────────────────────────────────────
         aliases: ['土', '地', '岩', '金牛', '處女', '摩羯'],
+        // ── 可抽到的星座 ─────────────────────────────────────────
         zodiacs: ['金牛座', '處女座', '摩羯座']
       }
+
     };
 
   /* ┌─────────────────────────────────────────────────────────────┐
@@ -1137,7 +1181,7 @@ create table if not exists public.zodiac_assets (
       toastTimer: null,
       scratchPercent: 0,
       activeOverlay: null,
-      displayMode: 'emoji',   // 'emoji' | 'image'
+      displayMode: 'image',   // 'emoji' | 'image'
       zodiacImagesLoaded: false,
       zodiacImageLoadPromise: null,
       gyroAccum: 0,           // 陀螺儀累積旋轉量（風元素）
@@ -1792,7 +1836,8 @@ create table if not exists public.zodiac_assets (
       ritualCopy.textContent = element.ritualLine;
       motionHintText.textContent = '等待動作';
 
-      // 顯示動作蓄能條
+      // 動作辨識模式：縮小間距 + 顯示蓄能條
+      uiContainer.classList.add('gesture-active');
       document.getElementById('motion-meter-wrap').style.display = '';
 
       if (navigator.vibrate) navigator.vibrate(100);
@@ -1877,7 +1922,8 @@ create table if not exists public.zodiac_assets (
       state.isSaved = false;
       state.isSpellCharged = false;
       clearMotionState();
-      // 隱藏動作蓄能條
+      // 重置動作辨識模式
+      uiContainer.classList.remove('gesture-active');
       document.getElementById('motion-meter-wrap').style.display = 'none';
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       // 重置感測器狀態，讓下次點擊啟動時由 initMotionSensor() 重新初始化
