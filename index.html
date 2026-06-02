@@ -1028,19 +1028,19 @@ create table if not exists public.zodiac_assets (
     const allZodiacs = Object.keys(ZODIAC_DATA);
 
   /* ╔═══════════════════════════════════════════════════════════════╗
-     ║  ★ 區塊 4：四大元素設定  ← 咒語內容主要改這裡                   
-     ║                                                              
-     ║  每個元素可自由修改的欄位：                                     
-     ║  ┌──────────────┬──────────────────────────────────────────┐ 
-     ║  │ name         │ 元素序列名稱（顯示在 badge 上）         
-     ║  │ spellHint    │ 語音辨識前的提示文字                   
-     ║  │ ritualTitle  │ 元素啟動後的主標語（粗體儀式感文字）   
-     ║  │ ritualLine   │ 動作說明（「請做這個動作」的引導文）    
-     ║  │ releaseText  │ 魔法釋放後、刮刮樂前的提示文字           
-     ║  │ motionHint   │ 動作蓄能時顯示的簡短提示                
-     ║  │ aliases      │ 語音辨識關鍵字（說這些詞會觸發此元素）   
-     ║  │ zodiacs      │ 這個元素抽到的星座（隨機選一個）         
-     ║  └──────────────┴──────────────────────────────────────────┘ 
+     ║  ★ 區塊 4：四大元素設定  ← 咒語內容主要改這裡               ║
+     ║                                                               ║
+     ║  每個元素可自由修改的欄位：                                   ║
+     ║  ┌──────────────┬──────────────────────────────────────────┐ ║
+     ║  │ name         │ 元素序列名稱（顯示在 badge 上）           │ ║
+     ║  │ spellHint    │ 語音辨識前的提示文字                      │ ║
+     ║  │ ritualTitle  │ 元素啟動後的主標語（粗體儀式感文字）      │ ║
+     ║  │ ritualLine   │ 動作說明（「請做這個動作」的引導文）      │ ║
+     ║  │ releaseText  │ 魔法釋放後、刮刮樂前的提示文字            │ ║
+     ║  │ motionHint   │ 動作蓄能時顯示的簡短提示                  │ ║
+     ║  │ aliases      │ 語音辨識關鍵字（說這些詞會觸發此元素）    │ ║
+     ║  │ zodiacs      │ 這個元素抽到的星座（隨機選一個）          │ ║
+     ║  └──────────────┴──────────────────────────────────────────┘ ║
      ╚═══════════════════════════════════════════════════════════════╝ */
     const elementZodiacs = {
 
@@ -1176,6 +1176,8 @@ create table if not exists public.zodiac_assets (
       motionEnabled: false,
       gyroEnabled: false,
       motionPermissionAsked: false,
+      iosMotionGranted: false,
+      iosGyroGranted: false,
       desktopTapCount: 0,
       desktopTapTimer: null,
       toastTimer: null,
@@ -1768,38 +1770,16 @@ create table if not exists public.zodiac_assets (
   /* ================================================================
      初始化動作感測器
   ================================================================ */
-    async function initMotionSensor() {
-      if (state.motionPermissionAsked) return;
-      state.motionPermissionAsked = true;
-
-      // 先移除舊監聽器，防止重置後重複綁定
+    // 只負責綁定監聽器（permission 已在 btn click 同步路徑取得）
+    function attachMotionListeners() {
       window.removeEventListener('devicemotion', handleMotion);
       window.removeEventListener('deviceorientation', handleGyro);
 
-      // 加速度計
-      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-        try {
-          const perm = await DeviceMotionEvent.requestPermission();
-          if (perm === 'granted') {
-            window.addEventListener('devicemotion', handleMotion);
-            state.motionEnabled = true;
-          }
-        } catch(e) { console.warn(e); }
-      } else if ('DeviceMotionEvent' in window) {
+      if (state.iosMotionGranted && 'DeviceMotionEvent' in window) {
         window.addEventListener('devicemotion', handleMotion);
         state.motionEnabled = true;
       }
-
-      // 陀螺儀（風元素用）
-      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        try {
-          const perm = await DeviceOrientationEvent.requestPermission();
-          if (perm === 'granted') {
-            window.addEventListener('deviceorientation', handleGyro);
-            state.gyroEnabled = true;
-          }
-        } catch(e) { console.warn(e); }
-      } else if ('DeviceOrientationEvent' in window) {
+      if (state.iosGyroGranted && 'DeviceOrientationEvent' in window) {
         window.addEventListener('deviceorientation', handleGyro);
         state.gyroEnabled = true;
       }
@@ -1926,10 +1906,15 @@ create table if not exists public.zodiac_assets (
       uiContainer.classList.remove('gesture-active');
       document.getElementById('motion-meter-wrap').style.display = 'none';
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // 重置感測器狀態，讓下次點擊啟動時由 initMotionSensor() 重新初始化
+      // 重置感測器狀態（permission 已取得，下次直接重新綁定）
       state.motionPermissionAsked = false;
       state.motionEnabled = false;
       state.gyroEnabled = false;
+      // 若 permission 已取得過，立刻重新綁定（iOS 不需再次彈窗）
+      if (state.iosMotionGranted || state.iosGyroGranted) {
+        attachMotionListeners();
+        state.motionPermissionAsked = true;
+      }
     }
 
   /* ================================================================
@@ -2310,7 +2295,30 @@ create table if not exists public.zodiac_assets (
   ================================================================ */
     btn.addEventListener('click', async () => {
       if (!state.currentUser) { openAuthModal(); setAuthMessage('請先登入或註冊，再開始收集卡牌。', 'error'); return; }
-      await initMotionSensor();
+
+      // ── iOS 必須在 click 同步路徑直接呼叫 requestPermission ──
+      // 不能放進 async function 裡 await，否則 iOS 視為非使用者手勢
+      if (!state.motionPermissionAsked) {
+        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+          try {
+            const p = await DeviceMotionEvent.requestPermission();
+            state.iosMotionGranted = (p === 'granted');
+          } catch(e) { state.iosMotionGranted = false; console.warn('motion permission:', e); }
+        } else {
+          state.iosMotionGranted = true; // Android / desktop 直接允許
+        }
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+          try {
+            const p = await DeviceOrientationEvent.requestPermission();
+            state.iosGyroGranted = (p === 'granted');
+          } catch(e) { state.iosGyroGranted = false; console.warn('gyro permission:', e); }
+        } else {
+          state.iosGyroGranted = true;
+        }
+        state.motionPermissionAsked = true;
+        attachMotionListeners(); // 依據 granted 結果綁定監聽器
+      }
+
       if (recognition) {
         try { recognition.start(); } catch(e) { console.warn(e); }
       } else {
