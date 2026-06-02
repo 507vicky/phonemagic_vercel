@@ -281,7 +281,6 @@
       color: #dbe7ff; font-size: 0.84rem; letter-spacing: 1px;
     }
 
-
     .gesture-hint {
       color: var(--muted); font-size: 0.84rem; text-align: center;
       line-height: 1.5; min-height: 38px;
@@ -572,6 +571,7 @@
       color: var(--text); padding: 11px 14px; border-radius: 14px; cursor: pointer;
     }
     .tab-btn.active { background: linear-gradient(135deg, rgba(140,183,255,0.24), rgba(147,255,221,0.18)); border-color: rgba(140,183,255,0.28); }
+    .form-group { margin-bottom: 12px; }
     .form-group { margin-bottom: 12px; }
     .form-label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 0.85rem; }
     .field {
@@ -877,17 +877,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-  /* ================================================================
-     ██████  ███████ ████████ ████████ ██ ███    ██  ██████  ███████
-     ██      ██         ██       ██    ██ ████   ██ ██       ██
-     ███████ █████      ██       ██    ██ ██ ██  ██ ██   ███ ███████
-          ██ ██         ██       ██    ██ ██  ██ ██ ██    ██      ██
-     ██████  ███████    ██       ██    ██ ██   ████  ██████  ███████
-     ================================================================
-
-     ┌─────────────────────────────────────────────────────────────┐
-     │  ★ 區塊 1：Supabase 設定（正式上線前在此填入）               │
-     └─────────────────────────────────────────────────────────────┘ */
     window.APP_CONFIG = window.APP_CONFIG || {
       supabaseUrl: 'https://fyumbmwacjlqdnjymdhi.supabase.co',
       supabaseAnonKey: 'sb_publishable_ZElK-ORl5Ns9eBCXx0NwOQ_-xVrmYvb',
@@ -936,18 +925,9 @@ create table if not exists public.zodiac_assets (
     };
 
     const ZODIAC_IMAGE_URLS = {
-      '牡羊座': '',
-      '金牛座': '',
-      '雙子座': '',
-      '巨蟹座': '',
-      '獅子座': '',
-      '處女座': '',
-      '天秤座': '',
-      '天蠍座': '',
-      '射手座': '',
-      '摩羯座': '',
-      '水瓶座': '',
-      '雙魚座': ''
+      '牡羊座': '', '金牛座': '', '雙子座': '', '巨蟹座': '',
+      '獅子座': '', '處女座': '', '天秤座': '', '天蠍座': '',
+      '射手座': '', '摩羯座': '', '水瓶座': '', '雙魚座': ''
     };
 
     window.getSupabaseSchemaSQL = () => SUPABASE_SCHEMA_SQL;
@@ -1005,9 +985,6 @@ create table if not exists public.zodiac_assets (
       return state.zodiacImageLoadPromise;
     }
 
-  /* ┌─────────────────────────────────────────────────────────────┐
-     │  ★ 區塊 3：12 星座對應資料（符號、元素）                    │
-     └─────────────────────────────────────────────────────────────┘ */
     const ZODIAC_DATA = {
       '牡羊座': { symbol: '♈', element: 'fire' },
       '金牛座': { symbol: '♉', element: 'earth' },
@@ -1025,137 +1002,78 @@ create table if not exists public.zodiac_assets (
 
     const allZodiacs = Object.keys(ZODIAC_DATA);
 
-  /* ╔═══════════════════════════════════════════════════════════════╗
-     ║  ★ 區塊 4：四大元素設定  ← 咒語內容主要改這裡               ║
-     ║                                                               ║
-     ║  每個元素可自由修改的欄位：                                   ║
-     ║  ┌──────────────┬──────────────────────────────────────────┐ ║
-     ║  │ name         │ 元素序列名稱（顯示在 badge 上）           │ ║
-     ║  │ spellHint    │ 語音辨識前的提示文字                      │ ║
-     ║  │ ritualTitle  │ 元素啟動後的主標語（粗體儀式感文字）      │ ║
-     ║  │ ritualLine   │ 動作說明（「請做這個動作」的引導文）      │ ║
-     ║  │ releaseText  │ 魔法釋放後、刮刮樂前的提示文字            │ ║
-     ║  │ motionHint   │ 動作蓄能時顯示的簡短提示                  │ ║
-     ║  │ aliases      │ 語音辨識關鍵字（說這些詞會觸發此元素）    │ ║
-     ║  │ zodiacs      │ 這個元素抽到的星座（隨機選一個）          │ ║
-     ║  └──────────────┴──────────────────────────────────────────┘ ║
-     ╚═══════════════════════════════════════════════════════════════╝ */
     const elementZodiacs = {
-
-      // ┌─────────────────────────────────────────────────────────┐
-      // │  🔥  火元素 ── 焰星序列                                  │
-      // └─────────────────────────────────────────────────────────┘
       fire: {
         key: 'fire',
-        name: '焰星序列',            // ← 元素序列名稱
+        name: '焰星序列',
         icon: '🔥',
         color: 'rgba(222, 87, 33, 0.72)',
         gradient: ['#ff7a18', '#ffb347'],
-        // ── 咒語文字（可自由修改） ──────────────────────────────
         spellHint:   '請吟誦「焰」或火象星座之名',
         ritualTitle: '灼光巡行，熾焰應誓。',
         ritualLine:  '焰脈已點燃。手持法杖，突然垂直向上高舉過頭，在最高點停頓一瞬間。',
         releaseText: '火象星圖已鬆動，抹去封印即可收下你的焰系卡牌。',
-        // ── 動作蓄能提示 ────────────────────────────────────────
         motionHint:  '🔥 快速向上高舉法杖，在最高點停頓！',
         motionClass: 'hint-fire',
-        // ── 語音辨識關鍵字（說出以下任一詞觸發） ──────────────
         aliases: ['火', '焰', '牡羊', '獅子', '射手'],
-        // ── 可抽到的星座（隨機選一個） ─────────────────────────
         zodiacs: ['牡羊座', '獅子座', '射手座']
       },
-
-      // ┌─────────────────────────────────────────────────────────┐
-      // │  💧  水元素 ── 潮星序列                                  │
-      // └─────────────────────────────────────────────────────────┘
       water: {
         key: 'water',
-        name: '潮星序列',            // ← 元素序列名稱
+        name: '潮星序列',
         icon: '💧',
         color: 'rgba(52, 118, 222, 0.70)',
         gradient: ['#2193b0', '#6dd5ed'],
-        // ── 咒語文字（可自由修改） ──────────────────────────────
         spellHint:   '請吟誦「潮」或水象星座之名',
         ritualTitle: '潮聲回應，深海立誓。',
         ritualLine:  '潮汐已與你共鳴。手臂放鬆，在前方空中緩慢劃出一個巨大的 ∞ 字型。',
         releaseText: '水象星圖已甦醒，刮開星霧後將直接寫入你的收藏檔案。',
-        // ── 動作蓄能提示 ────────────────────────────────────────
         motionHint:  '💧 緩慢左右擺動法杖，畫出 ∞ 的波浪軌跡。',
         motionClass: 'hint-water',
-        // ── 語音辨識關鍵字 ──────────────────────────────────────
         aliases: ['水', '潮', '巨蟹', '天蠍', '雙魚'],
-        // ── 可抽到的星座 ─────────────────────────────────────────
         zodiacs: ['巨蟹座', '天蠍座', '雙魚座']
       },
-
-      // ┌─────────────────────────────────────────────────────────┐
-      // │  🌪️  風元素 ── 嵐星序列                                  │
-      // └─────────────────────────────────────────────────────────┘
       wind: {
         key: 'wind',
-        name: '嵐星序列',            // ← 元素序列名稱
+        name: '嵐星序列',
         icon: '🌪️',
         color: 'rgba(33, 178, 143, 0.68)',
         gradient: ['#11998e', '#38ef7d'],
-        // ── 咒語文字（可自由修改） ──────────────────────────────
         spellHint:   '請吟誦「嵐」或風象星座之名',
         ritualTitle: '風紋振翼，流界共鳴。',
         ritualLine:  '嵐紋已甦醒。手臂向前，手持法杖在頭頂或胸前快速左右橫掃，引導氣流匯聚。',
         releaseText: '風象印記正在成形，抹去薄霧即可取得你的氣流卡牌。',
-        // ── 動作蓄能提示 ────────────────────────────────────────
         motionHint:  '🌪️ 快速左右橫掃法杖，引導氣流！',
         motionClass: 'hint-wind',
-        // ── 語音辨識關鍵字 ──────────────────────────────────────
         aliases: ['風', '嵐', '雙子', '天秤', '水瓶'],
-        // ── 可抽到的星座 ─────────────────────────────────────────
         zodiacs: ['雙子座', '天秤座', '水瓶座']
       },
-
-      // ┌─────────────────────────────────────────────────────────┐
-      // │  🌍  土元素 ── 岩星序列                                  │
-      // └─────────────────────────────────────────────────────────┘
       earth: {
         key: 'earth',
-        name: '岩星序列',            // ← 元素序列名稱
+        name: '岩星序列',
         icon: '🌍',
         color: 'rgba(132, 104, 64, 0.72)',
         gradient: ['#614385', '#516395'],
-        // ── 咒語文字（可自由修改） ──────────────────────────────
         spellHint:   '請吟誦「岩」或土象星座之名',
         ritualTitle: '岩脈低鳴，大地見證。',
         ritualLine:  '岩脈已與你對頻。高舉法杖，由上往下猛力劈下，在腰部位置驟然急停。',
         releaseText: '土象封印正在崩解，抹去表層後即可鎖定你的地脈卡牌。',
-        // ── 動作蓄能提示 ────────────────────────────────────────
         motionHint:  '⛰️ 由上往下猛劈法杖，在腰部急停！',
         motionClass: 'hint-earth',
-        // ── 語音辨識關鍵字 ──────────────────────────────────────
         aliases: ['土', '地', '岩', '金牛', '處女', '摩羯'],
-        // ── 可抽到的星座 ─────────────────────────────────────────
         zodiacs: ['金牛座', '處女座', '摩羯座']
       }
-
     };
 
-  /* ┌─────────────────────────────────────────────────────────────┐
-     │  ★ 區塊 5：動作辨識閾值（可調整）                          │
-     │  xThreshold：左右加速度閾值（越小越靈敏，建議 3.5～6）      │
-     │  yThreshold：上下加速度閾值（越小越靈敏，建議 5～10）       │
-     │  gyroThreshold：陀螺儀旋轉速度（風元素，建議 2.5～4）       │
-     │  slowSpeedMax：水元素慢速上限（越大越寬鬆，建議 2.5～4）    │
-     │  motionTimeout：動作超時重置（毫秒，建議 2000～3500）        │
-     └─────────────────────────────────────────────────────────────┘ */
     const MOTION_CONFIG = {
-      xThreshold: 4.5,       // 左右加速度（風/水共用）
-      yThreshold: 7.0,       // 上下加速度（火/土）
-      gyroThreshold: 3.0,    // 陀螺儀旋轉（風）
-      slowSpeedMax: 3.5,     // 水元素最大速度（超過就不算水）
-      motionTimeout: 2500,   // 超時重置（毫秒）
-      stepsRequired: 4       // 需要幾步完成動作
+      xThreshold: 4.5,
+      yThreshold: 7.0,
+      gyroThreshold: 3.0,
+      slowSpeedMax: 3.5,
+      motionTimeout: 2500,
+      stepsRequired: 4
     };
 
-  /* ================================================================
-     應用程式狀態
-  ================================================================ */
     const state = {
       authMode: 'login',
       storageMode: 'local',
@@ -1181,17 +1099,15 @@ create table if not exists public.zodiac_assets (
       toastTimer: null,
       scratchPercent: 0,
       activeOverlay: null,
-      displayMode: 'image',   // 'emoji' | 'image'
+      displayMode: 'image',
       zodiacImagesLoaded: false,
       zodiacImageLoadPromise: null,
-      gyroAccum: 0,           // 陀螺儀累積旋轉量（風元素）
+      gyroAccum: 0,
       lastGyroTime: 0,
-      fireUpTriggered: false  // 火元素：上舉偵測旗標
+      fireUpTriggered: false
     };
 
-  /* ================================================================
-     DOM 參考
-  ================================================================ */
+    // DOM Elements Binding
     const modeBadge = document.getElementById('mode-badge');
     const authOpenBtn = document.getElementById('auth-open-btn');
     const userAvatarBtn = document.getElementById('user-avatar-btn');
@@ -1254,9 +1170,6 @@ create table if not exists public.zodiac_assets (
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
 
-  /* ================================================================
-     通用 UI 工具
-  ================================================================ */
     function showToast(message) {
       toast.textContent = message;
       toast.classList.add('show');
@@ -1304,7 +1217,6 @@ create table if not exists public.zodiac_assets (
       scratchProgressText.textContent = `封印解除 ${safePercent}%`;
     }
 
-    /* 動作點亮指示燈 */
     function updateMotionDots(step, elementKey) {
       const colorClass = elementKey ? `lit-${elementKey}` : '';
       for (let i = 0; i < 4; i++) {
@@ -1314,9 +1226,6 @@ create table if not exists public.zodiac_assets (
       }
     }
 
-  /* ================================================================
-     顯示模式切換（emoji ↔ 圖片）
-  ================================================================ */
     function setDisplayMode(mode) {
       state.displayMode = mode;
       displayModeLabel.textContent = mode === 'image' ? '圖片模式' : 'emoji 模式';
@@ -1332,7 +1241,6 @@ create table if not exists public.zodiac_assets (
       showToast(state.displayMode === 'image' ? '已切換為圖片模式' : '已切換為 emoji 模式');
     });
 
-    /* 刮刮樂揭示區域：依模式顯示 */
     function updateScratchReveal(zodiacKey) {
       const data = ZODIAC_DATA[zodiacKey];
       if (!data) return;
@@ -1361,9 +1269,6 @@ create table if not exists public.zodiac_assets (
       }
     }
 
-  /* ================================================================
-     粒子
-  ================================================================ */
     function spawnParticles() {
       if (!particleField) return;
       particleField.innerHTML = '';
@@ -1382,16 +1287,11 @@ create table if not exists public.zodiac_assets (
       }
     }
 
-  /* ================================================================
-     刮刮樂揭示動畫
-  ================================================================ */
     function triggerRevealAnimation() {
-      // 1. 閃光
       revealFlash.classList.remove('active');
       void revealFlash.offsetWidth; // reflow
       revealFlash.classList.add('active');
 
-      // 2. 星粒子爆炸
       const container = scratchContainer;
       const cx = container.offsetWidth / 2;
       const cy = container.offsetHeight / 2;
@@ -1411,27 +1311,21 @@ create table if not exists public.zodiac_assets (
         setTimeout(() => s.remove(), 1200);
       }
 
-      // 3. 震動
       if (navigator.vibrate) navigator.vibrate([80, 40, 120]);
     }
 
-  /* ================================================================
-     刮刮樂繪圖
-  ================================================================ */
     function initScratchCard(element) {
       state.isSaved = false;
       updateScratchProgress(0);
       ctx.globalCompositeOperation = 'source-over';
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // 漸層背景
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       gradient.addColorStop(0, element.gradient[0]);
       gradient.addColorStop(1, element.gradient[1]);
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // 星星紋路
       ctx.fillStyle = 'rgba(255,255,255,0.08)';
       for (let i = 0; i < 400; i++) {
         ctx.beginPath();
@@ -1439,14 +1333,12 @@ create table if not exists public.zodiac_assets (
         ctx.fill();
       }
 
-      // 外圓
       ctx.strokeStyle = 'rgba(255,255,255,0.22)';
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.arc(canvas.width / 2, canvas.height / 2, 84, 0, Math.PI * 2);
       ctx.stroke();
 
-      // 元素圖示（大型中央提示）
       ctx.fillStyle = 'rgba(255,255,255,0.22)';
       ctx.font = '80px serif';
       ctx.textAlign = 'center';
@@ -1467,7 +1359,6 @@ create table if not exists public.zodiac_assets (
       const x = (clientX - rect.left) * scaleX;
       const y = (clientY - rect.top) * scaleY;
 
-      // 更滑順筆觸：更大直徑 + 模糊邊緣
       const radius = 28;
       const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
       gradient.addColorStop(0, 'rgba(0,0,0,1)');
@@ -1544,9 +1435,6 @@ create table if not exists public.zodiac_assets (
       }
     }
 
-  /* ================================================================
-     收集冊渲染
-  ================================================================ */
     function renderCollection() {
       zodiacGrid.innerHTML = '';
       const collectedNames = state.collection.map(item => item.name);
@@ -1622,10 +1510,6 @@ create table if not exists public.zodiac_assets (
       }
     }
 
-  /* ================================================================
-     ★ 區塊 6：四大元素動作辨識邏輯
-     可修改：MOTION_CONFIG（見上方區塊 5）
-  ================================================================ */
     function clearMotionState() {
       state.motionStep = 0;
       state.lastMotionSign = 0;
@@ -1637,14 +1521,11 @@ create table if not exists public.zodiac_assets (
       updateMotionDots(0, '');
     }
 
-    /* ── 風元素：陀螺儀 Z 軸旋轉 ── */
     function handleGyro(event) {
       if (!state.isSpellCharged || state.currentElement !== 'wind') return;
-      const alpha = event.gamma !== null ? event.gamma : 0; // gamma = 前後傾
-      const beta = event.alpha !== null ? event.alpha : 0;
       const rotRate = event.rotationRate;
       if (!rotRate) return;
-      const rz = rotRate.alpha || 0; // Z 軸旋轉速率 (deg/s)
+      const rz = rotRate.alpha || 0;
       const now = Date.now();
 
       if (now - state.lastMotionTime > MOTION_CONFIG.motionTimeout) {
@@ -1670,7 +1551,6 @@ create table if not exists public.zodiac_assets (
       }
     }
 
-    /* ── 主動作處理（加速度計） ── */
     function handleMotion(event) {
       if (!state.isSpellCharged) return;
       const el = state.currentElement;
@@ -1684,7 +1564,6 @@ create table if not exists public.zodiac_assets (
         clearMotionState();
       }
 
-      // ── 火元素：Y 軸向上峰值 ──
       if (el === 'fire') {
         if (accY > MOTION_CONFIG.yThreshold) {
           if (!state.fireUpTriggered) {
@@ -1697,13 +1576,12 @@ create table if not exists public.zodiac_assets (
             if (navigator.vibrate) navigator.vibrate(50);
           }
         } else if (accY < -2) {
-          state.fireUpTriggered = false; // 手放下後重置可再次觸發
+          state.fireUpTriggered = false;
         }
         if (state.motionStep >= MOTION_CONFIG.stepsRequired) releaseMagic();
         return;
       }
 
-      // ── 土元素：Y 軸向下衝擊 ──
       if (el === 'earth') {
         if (accY < -MOTION_CONFIG.yThreshold) {
           state.lastMotionTime = now;
@@ -1719,7 +1597,6 @@ create table if not exists public.zodiac_assets (
         return;
       }
 
-      // ── 風元素（加速度計備援）：X 軸快速來回 ──
       if (el === 'wind' && !state.gyroEnabled) {
         if (Math.abs(accX) > MOTION_CONFIG.xThreshold) {
           const currentSign = Math.sign(accX);
@@ -1741,7 +1618,6 @@ create table if not exists public.zodiac_assets (
         return;
       }
 
-      // ── 水元素：X 軸慢速來回 ──
       if (el === 'water') {
         const speed = Math.abs(accX);
         if (speed > 1.5 && speed < MOTION_CONFIG.slowSpeedMax) {
@@ -1765,10 +1641,6 @@ create table if not exists public.zodiac_assets (
       }
     }
 
-  /* ================================================================
-     初始化動作感測器
-  ================================================================ */
-    // 只負責綁定監聽器（permission 已在 btn click 同步路徑取得）
     function attachMotionListeners() {
       window.removeEventListener('devicemotion', handleMotion);
       window.removeEventListener('deviceorientation', handleGyro);
@@ -1783,9 +1655,6 @@ create table if not exists public.zodiac_assets (
       }
     }
 
-  /* ================================================================
-     元素啟動
-  ================================================================ */
     function activateElement(elementKey) {
       state.isSpellCharged = true;
       state.currentElement = elementKey;
@@ -1801,7 +1670,6 @@ create table if not exists public.zodiac_assets (
       centerIcon.style.opacity = '1';
       centerIcon.style.transform = 'scale(1)';
 
-      // 移除所有 hint class，加上對應元素的動畫
       centerIcon.className = '';
       centerIcon.id = 'center-icon';
       centerIcon.classList.add(element.motionClass);
@@ -1814,18 +1682,13 @@ create table if not exists public.zodiac_assets (
       ritualCopy.textContent = element.ritualLine;
       motionHintText.textContent = '等待動作';
 
-      // 動作辨識模式：縮小間距 + 顯示蓄能條
       uiContainer.classList.add('gesture-active');
       document.getElementById('motion-meter-wrap').style.display = '';
 
       if (navigator.vibrate) navigator.vibrate(100);
     }
 
-  /* ================================================================
-     釋放魔法 → 展示刮刮樂
-  ================================================================ */
     function releaseMagic() {
-      // 防止重複觸發
       if (!state.isSpellCharged) return;
       state.isSpellCharged = false;
 
@@ -1840,7 +1703,6 @@ create table if not exists public.zodiac_assets (
       const element = elementZodiacs[state.currentElement];
       state.targetZodiac = element.zodiacs[Math.floor(Math.random() * element.zodiacs.length)];
 
-      // 閃光過渡動畫
       lightLayer.style.background = 'rgba(255,255,255,1)';
       uiContainer.style.opacity = '0';
       uiContainer.style.pointerEvents = 'none';
@@ -1853,7 +1715,6 @@ create table if not exists public.zodiac_assets (
         zodiacName.textContent = state.targetZodiac;
         zodiacSubtitle.textContent = `${element.name} · 即將顯影`;
 
-        // 設定揭示區域（emoji 或圖片）
         updateScratchReveal(state.targetZodiac);
 
         ritualLine.textContent = element.releaseText;
@@ -1866,9 +1727,6 @@ create table if not exists public.zodiac_assets (
       }, 800);
     }
 
-  /* ================================================================
-     重置
-  ================================================================ */
     function resetMagic() {
       resultCard.classList.remove('show');
       uiContainer.style.opacity = '1';
@@ -1900,24 +1758,18 @@ create table if not exists public.zodiac_assets (
       state.isSaved = false;
       state.isSpellCharged = false;
       clearMotionState();
-      // 重置動作辨識模式
       uiContainer.classList.remove('gesture-active');
       document.getElementById('motion-meter-wrap').style.display = 'none';
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // 重置感測器狀態（permission 已取得，下次直接重新綁定）
       state.motionPermissionAsked = false;
       state.motionEnabled = false;
       state.gyroEnabled = false;
-      // 若 permission 已取得過，立刻重新綁定（iOS 不需再次彈窗）
       if (state.iosMotionGranted || state.iosGyroGranted) {
         attachMotionListeners();
         state.motionPermissionAsked = true;
       }
     }
 
-  /* ================================================================
-     語音辨識
-  ================================================================ */
     function initSpeechRecognition() {
       if (!SpeechRecognition) {
         btn.disabled = false;
@@ -1941,23 +1793,32 @@ create table if not exists public.zodiac_assets (
         gestureHint.textContent = '語音辨識中，請清楚說出元素或對應星座。';
         centerIcon.style.opacity = '0';
       };
+      
       recognition.onresult = function (event) {
         btn.classList.remove('listening');
         const transcript = event.results[0][0].transcript;
         checkSpell(transcript);
       };
+      
       recognition.onerror = function (event) {
         btn.classList.remove('listening');
         btn.textContent = '重試';
+        
+        // 專為 iOS 最佳化的錯誤攔截機制
         if (event.error === 'not-allowed') {
-          statusText.innerHTML = '⚠️ 麥克風權限被拒絕。<br>請改用元素選單繼續。';
-          gestureHint.textContent = '已切換為手動元素選單。';
-          setTimeout(openElementModal, 180);
+          statusText.innerHTML = '⚠️ 麥克風權限被拒絕。<br>請至 iPhone「設定 > Safari > 麥克風」允許存取，或點擊下方直接選擇元素。';
+          gestureHint.textContent = '已為您自動打開手動元素選單。';
+          setTimeout(openElementModal, 300);
+        } else if (event.error === 'service-not-allowed') {
+          // 強大的 iOS 系統層配置指引（iOS Safari service-not-allowed 專用防線）
+          statusText.innerHTML = '⚠️ iPhone 語音服務受限 (service-not-allowed)。<br><b>請確認以下設定：</b><br>1. 至「設定 > 一般 > 鍵盤」確認<b>「啟用聽寫」</b>與 Siri 為開啟狀態。<br>2. 請不要在「加到主畫面」的 App 獨立模式下使用麥克風辨識。';
+          gestureHint.textContent = 'iOS 系統聽寫服務未就緒，已為您自動載入手動選單。';
+          setTimeout(openElementModal, 1500); // 提供 1.5 秒讓玩家閱讀 iOS 防呆指引後彈出選單
         } else if (event.error === 'no-speech') {
-          statusText.innerHTML = '🔇 沒有聽清楚。<br>請靠近麥克風再說一次，或改用元素選單。';
+          statusText.innerHTML = '🔇 沒有聽清楚。<br>請靠近麥克風再試一次，或直接使用手動選單。';
         } else {
           statusText.innerHTML = `❌ 辨識失敗：${event.error}`;
-          gestureHint.textContent = '你也可以改用元素選單，不會中斷體驗流程。';
+          gestureHint.textContent = '若辨識不順暢，可點擊啟動直接打開元素選單。';
         }
       };
     }
@@ -1981,9 +1842,6 @@ create table if not exists public.zodiac_assets (
       activateElement(matchedElement.key);
     }
 
-  /* ================================================================
-     Auth 邏輯
-  ================================================================ */
     function setAuthMode(mode) {
       state.authMode = mode;
       const isRegister = mode === 'register';
@@ -2027,7 +1885,6 @@ create table if not exists public.zodiac_assets (
         userAvatarBtn.style.display = 'none';
         return;
       }
-      // 登入後：隱藏登入按鈕，顯示頭像按鈕（面板預設收合）
       authOpenBtn.style.display = 'none';
       userAvatarBtn.style.display = '';
       userAvatarBtn.title = user.displayName;
@@ -2049,9 +1906,6 @@ create table if not exists public.zodiac_assets (
       return { id: user.id, email: user.email, displayName: user.displayName || user.email?.split('@')[0] || '未命名旅人' };
     }
 
-  /* ================================================================
-     本機 DataStore
-  ================================================================ */
     const localStore = {
       mode: 'local',
       async init() { return true; },
@@ -2099,9 +1953,6 @@ create table if not exists public.zodiac_assets (
       }
     };
 
-  /* ================================================================
-     Supabase DataStore
-  ================================================================ */
     function createSupabaseStore(client) {
       return {
         mode: 'cloud', client,
@@ -2193,8 +2044,8 @@ create table if not exists public.zodiac_assets (
     async function initStore() {
       const hasConfig = window.APP_CONFIG.supabaseUrl
         && window.APP_CONFIG.supabaseAnonKey
-        && !window.APP_CONFIG.supabaseUrl.includes('{{')
-        && !window.APP_CONFIG.supabaseAnonKey.includes('{{')
+        && !window.APP_CONFIG.supabaseUrl.includes('{{'))
+        && !window.APP_CONFIG.supabaseAnonKey.includes('{{'))
         && window.supabase;
       if (hasConfig) {
         try {
@@ -2288,42 +2139,55 @@ create table if not exists public.zodiac_assets (
       }
     }
 
-  /* ================================================================
-     事件綁定
-  ================================================================ */
     btn.addEventListener('click', () => {
-      if (!state.currentUser) { openAuthModal(); setAuthMessage('請先登入或註冊，再開始收集卡牌。', 'error'); return; }
-
-      // ── iOS 必須在 click 同步路徑、任何 await 之前呼叫 recognition.start() ──
-      // 語音辨識優先：同步觸發，確保 iOS 視為合法使用者手勢
+      // 🚀 【極致同步手勢防線】
+      // 點擊事件主體的第一行，絕無條件語句或非同步延遲，確保 iOS Safari 批准此項使用者手勢
       if (recognition) {
-        try { recognition.start(); } catch(e) { console.warn(e); }
+        try {
+          recognition.start();
+        } catch(e) {
+          console.warn('語音啟動被動攔截或已在執行中:', e);
+        }
       } else {
         openElementModal();
       }
 
-      // ── Motion permission 在語音啟動後非同步處理，不影響語音的使用者手勢鏈 ──
+      // 檢查登入。若未登入，此時延遲觸發登入視窗，同時在後續安全關閉語音
+      if (!state.currentUser) {
+        setTimeout(() => {
+          openAuthModal();
+          setAuthMessage('請先登入或註冊，再開始收集卡牌。', 'error');
+          try { if (recognition) recognition.stop(); } catch (err) {}
+        }, 100);
+        return;
+      }
+
+      // 將 Motion/Gyroscope 權限請求完全抽離同步手勢主鏈，利用非同步setTimeout在背景靜默加載，避免手勢鏈相撞
       if (!state.motionPermissionAsked) {
-        (async () => {
+        state.motionPermissionAsked = true;
+        setTimeout(async () => {
+          // 動態加速度權限請求
           if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
             try {
               const p = await DeviceMotionEvent.requestPermission();
               state.iosMotionGranted = (p === 'granted');
-            } catch(e) { state.iosMotionGranted = false; console.warn('motion permission:', e); }
+            } catch(e) { state.iosMotionGranted = false; console.warn('motion permission err:', e); }
           } else {
-            state.iosMotionGranted = true; // Android / desktop 直接允許
+            state.iosMotionGranted = true;
           }
+          
+          // 陀螺儀角度權限請求
           if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
             try {
               const p = await DeviceOrientationEvent.requestPermission();
               state.iosGyroGranted = (p === 'granted');
-            } catch(e) { state.iosGyroGranted = false; console.warn('gyro permission:', e); }
+            } catch(e) { state.iosGyroGranted = false; console.warn('gyro permission err:', e); }
           } else {
             state.iosGyroGranted = true;
           }
-          state.motionPermissionAsked = true;
-          attachMotionListeners(); // 依據 granted 結果綁定監聽器
-        })();
+          
+          attachMotionListeners();
+        }, 300);
       }
     });
 
@@ -2340,17 +2204,18 @@ create table if not exists public.zodiac_assets (
     closeModalBtn.addEventListener('click', closeCollectionModal);
     closeElementModalBtn.addEventListener('click', closeElementModal);
     authOpenBtn.addEventListener('click', openAuthModal);
-    // 頭像按鈕：切換個人資料面板
+    
     userAvatarBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       userPanel.classList.toggle('visible');
     });
-    // 點擊其他地方收合面板
+    
     document.addEventListener('click', (e) => {
       if (!userPanel.contains(e.target) && e.target !== userAvatarBtn) {
         userPanel.classList.remove('visible');
       }
     });
+    
     logoutBtn.addEventListener('click', handleLogout);
     tabLogin.addEventListener('click', () => setAuthMode('login'));
     tabRegister.addEventListener('click', () => setAuthMode('register'));
@@ -2374,9 +2239,6 @@ create table if not exists public.zodiac_assets (
     });
     window.addEventListener('resize', spawnParticles);
 
-  /* ================================================================
-     初始化
-  ================================================================ */
     updateMotionMeter(0);
     updateScratchProgress(0);
     setStep('login');
@@ -2385,9 +2247,8 @@ create table if not exists public.zodiac_assets (
     initSpeechRecognition();
     setAuthMode('login');
     window.resetMagic = resetMagic;
-    window.updateZodiacImages = updateZodiacImages; // 暴露給外部 API 呼叫
+    window.updateZodiacImages = updateZodiacImages;
 
   </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
