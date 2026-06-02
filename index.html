@@ -933,18 +933,18 @@ create table if not exists public.zodiac_assets (
 
     const SUPABASE_BUCKET = window.APP_CONFIG.supabaseBucket || 'zodiac-cards';
     const ZODIAC_STORAGE_FILES = {
-      '牡羊座': 'aries.png',
-      '金牛座': 'taurus.png',
-      '雙子座': 'gemini.png',
-      '巨蟹座': 'cancer.png',
-      '獅子座': 'leo.png',
-      '處女座': 'virgo.png',
-      '天秤座': 'libra.png',
-      '天蠍座': 'scorpio.png',
-      '射手座': 'sagittarius.png',
-      '摩羯座': 'capricorn.png',
-      '水瓶座': 'aquarius.png',
-      '雙魚座': 'pisces.png'
+      '牡羊座': 'aries.webp',
+      '金牛座': 'taurus.webp',
+      '雙子座': 'gemini.webp',
+      '巨蟹座': 'cancer.webp',
+      '獅子座': 'leo.webp',
+      '處女座': 'virgo.webp',
+      '天秤座': 'libra.webp',
+      '天蠍座': 'scorpio.webp',
+      '射手座': 'sagittarius.webp',
+      '摩羯座': 'capricorn.webp',
+      '水瓶座': 'aquarius.webp',
+      '雙魚座': 'pisces.webp'
     };
 
     const ZODIAC_IMAGE_URLS = {
@@ -1742,6 +1742,10 @@ create table if not exists public.zodiac_assets (
       if (state.motionPermissionAsked) return;
       state.motionPermissionAsked = true;
 
+      // 先移除舊監聽器，防止重置後重複綁定
+      window.removeEventListener('devicemotion', handleMotion);
+      window.removeEventListener('deviceorientation', handleGyro);
+
       // 加速度計
       if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
         try {
@@ -1809,6 +1813,10 @@ create table if not exists public.zodiac_assets (
      釋放魔法 → 展示刮刮樂
   ================================================================ */
     function releaseMagic() {
+      // 防止重複觸發
+      if (!state.isSpellCharged) return;
+      state.isSpellCharged = false;
+
       window.removeEventListener('devicemotion', handleMotion);
       window.removeEventListener('deviceorientation', handleGyro);
       state.motionEnabled = false;
@@ -1880,9 +1888,10 @@ create table if not exists public.zodiac_assets (
       state.isSpellCharged = false;
       clearMotionState();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // 重新啟動感測器
+      // 重置感測器狀態，讓下次點擊啟動時由 initMotionSensor() 重新初始化
       state.motionPermissionAsked = false;
-      window.addEventListener('devicemotion', handleMotion);
+      state.motionEnabled = false;
+      state.gyroEnabled = false;
     }
 
   /* ================================================================
