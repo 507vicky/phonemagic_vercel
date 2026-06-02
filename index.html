@@ -6,6 +6,9 @@
   <meta name="theme-color" content="#06070b" />
   <title>星軌校準法杖｜登入收藏版</title>
   <style>
+    /* ============================================================
+       ★ 全域 CSS 變數
+       ============================================================ */
     :root {
       --bg: #06070b;
       --panel: rgba(255, 255, 255, 0.06);
@@ -21,12 +24,22 @@
       --safe-right: env(safe-area-inset-right, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-left: env(safe-area-inset-left, 0px);
+      /* 元素顏色（收集冊底色） */
+      --fire-color: rgba(222, 87, 33, 0.55);
+      --fire-border: rgba(255, 140, 60, 0.45);
+      --water-color: rgba(32, 100, 200, 0.55);
+      --water-border: rgba(80, 160, 255, 0.45);
+      --wind-color: rgba(20, 160, 120, 0.55);
+      --wind-border: rgba(60, 230, 170, 0.45);
+      --earth-color: rgba(100, 72, 40, 0.55);
+      --earth-border: rgba(170, 130, 80, 0.45);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
+
+    /* 桌機允許滾動，手機 overflow hidden */
+    html {
       width: 100%;
-      height: 100%;
       min-height: 100dvh;
       background:
         radial-gradient(circle at top, rgba(85, 120, 255, 0.16), transparent 28%),
@@ -34,61 +47,54 @@
         var(--bg);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
-      overflow-x: hidden;
-      overflow-y: auto;
-      touch-action: manipulation;
     }
 
     body {
+      width: 100%;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      touch-action: manipulation;
       display: flex;
       justify-content: center;
       align-items: flex-start;
       position: relative;
-      min-height: 100dvh;
-      padding: calc(var(--safe-top) + 14px) calc(var(--safe-right) + 14px) calc(var(--safe-bottom) + 14px) calc(var(--safe-left) + 14px);
+      padding: calc(var(--safe-top) + 90px) calc(var(--safe-right) + 14px) calc(var(--safe-bottom) + 80px) calc(var(--safe-left) + 14px);
     }
 
-    body.modal-open {
-      overflow: hidden;
-    }
+    body.modal-open { overflow: hidden; }
 
+    /* ============================================================
+       ★ 粒子
+       ============================================================ */
     #particle-field {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
     }
-
     .particle {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
+      position: absolute; width: 6px; height: 6px; border-radius: 50%;
       background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(255,255,255,0.08));
-      opacity: 0.28;
-      animation: floatParticle linear infinite;
+      opacity: 0.28; animation: floatParticle linear infinite;
     }
-
     @keyframes floatParticle {
       0% { transform: translate3d(0, 20px, 0) scale(0.8); opacity: 0; }
       15% { opacity: 0.32; }
       100% { transform: translate3d(0, -110vh, 0) scale(1.15); opacity: 0; }
     }
 
-    button, input {
-      font: inherit;
-    }
+    button, input { font: inherit; }
 
+    /* ============================================================
+       ★ 光效層
+       ============================================================ */
     #light-layer {
-      position: absolute;
-      inset: 0;
-      background: transparent;
+      position: fixed; inset: 0; background: transparent;
       transition: background 0.7s ease-out, opacity 0.6s ease;
-      z-index: 1;
-      pointer-events: none;
+      z-index: 1; pointer-events: none;
     }
 
+    /* ============================================================
+       ★ 頂部導覽列
+       ============================================================ */
     .top-bar {
       position: fixed;
       top: calc(var(--safe-top) + 12px);
@@ -102,135 +108,81 @@
       pointer-events: none;
     }
 
-    .brand,
-    .top-actions,
-    .user-panel,
-    #collection-btn,
-    #result-card,
-    #ui-container,
-    .modal-content,
-    .auth-card,
-    .toast {
+    .brand, .top-actions, .user-panel,
+    #collection-btn, #result-card, #ui-container,
+    .modal-content, .auth-card, .toast {
       backdrop-filter: blur(22px);
       -webkit-backdrop-filter: blur(22px);
     }
 
     .brand {
-      display: flex;
-      gap: 12px;
-      align-items: center;
+      display: flex; gap: 12px; align-items: center;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 12px 14px;
-      box-shadow: var(--shadow);
-      pointer-events: auto;
+      border-radius: 18px; padding: 12px 14px;
+      box-shadow: var(--shadow); pointer-events: auto;
     }
-
     .brand-mark {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
+      width: 42px; height: 42px; display: grid; place-items: center;
       border-radius: 14px;
       background: linear-gradient(135deg, rgba(140,183,255,0.25), rgba(255,255,255,0.08));
       font-size: 1.2rem;
     }
-
     .brand-title { font-size: 1rem; letter-spacing: 2px; }
     .brand-subtitle { font-size: 0.74rem; color: var(--muted); letter-spacing: 1px; }
 
     .top-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      pointer-events: auto;
+      display: flex; gap: 10px; align-items: center; pointer-events: auto;
+      flex-wrap: wrap; justify-content: flex-end;
     }
 
-    .chip,
-    .chip-btn {
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.05);
-      color: var(--text);
-      padding: 10px 14px;
-      font-size: 0.82rem;
-      letter-spacing: 1px;
+    .chip, .chip-btn {
+      border-radius: 999px; border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05); color: var(--text);
+      padding: 10px 14px; font-size: 0.82rem; letter-spacing: 1px;
     }
-
     .chip.local { color: #ffe08a; }
     .chip.cloud { color: #9de8ff; }
-    .chip.none { color: #ff8c8c; }
-
-    .chip-btn {
-      cursor: pointer;
-      transition: transform 0.2s ease, background 0.2s ease;
-    }
-
+    .chip-btn { cursor: pointer; transition: transform 0.2s ease, background 0.2s ease; }
     .chip-btn:active { transform: scale(0.97); }
 
+    /* ============================================================
+       ★ 使用者資訊面板（點擊才展開，預設隱藏）
+       ============================================================ */
     .user-panel {
       position: fixed;
-      top: calc(var(--safe-top) + 12px);
-      right: calc(var(--safe-right) + 12px);
-      z-index: 20;
-      width: min(280px, calc(100vw - 36px));
-      background: rgba(255,255,255,0.05);
+      top: calc(var(--safe-top) + 86px);
+      left: calc(var(--safe-left) + 12px);
+      z-index: 25;
+      width: min(320px, calc(100vw - 36px));
+      background: rgba(14, 16, 28, 0.92);
       border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 12px;
+      border-radius: 22px; padding: 16px;
       box-shadow: var(--shadow);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      max-height: calc(100vh - calc(var(--safe-top) + 140px));
-      overflow-y: auto;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      /* 預設隱藏 */
+      opacity: 0; transform: translateY(-8px); pointer-events: none;
     }
-
-    .user-panel.hidden {
-      opacity: 0;
-      transform: translateY(-10px);
-      pointer-events: none;
+    .user-panel.visible {
+      opacity: 1; transform: translateY(0); pointer-events: auto;
     }
-
-    .user-panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .user-panel-header .chip-btn {
-      padding: 6px 10px;
-      font-size: 0.75rem;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .user-panel strong { display: block; font-size: 0.95rem; word-break: break-all; }
-    .user-meta { color: var(--muted); font-size: 0.8rem; line-height: 1.4; word-break: break-word; }
-    .mini-stats {
-      margin-top: 8px;
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
+    .user-panel-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .user-panel strong { display: block; font-size: 1rem; }
+    .user-meta { color: var(--muted); font-size: 0.82rem; line-height: 1.45; }
+    .mini-stats { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
     .stat-pill {
-      border-radius: 999px;
-      padding: 6px 10px;
+      border-radius: 999px; padding: 8px 12px;
       border: 1px solid rgba(255,255,255,0.08);
       background: rgba(255,255,255,0.04);
-      font-size: 0.75rem;
-      color: var(--muted);
+      font-size: 0.8rem; color: var(--muted);
     }
 
+    /* ============================================================
+       ★ 主容器
+       ============================================================ */
     #ui-container {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 18px;
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column; align-items: center; gap: 18px;
       width: min(92vw, 460px);
       padding: 30px 22px 24px;
       border-radius: 28px;
@@ -238,545 +190,515 @@
       border: 1px solid rgba(255,255,255,0.08);
       box-shadow: var(--shadow);
       transition: opacity 0.5s ease;
+      margin: 0 auto;
     }
 
+    /* ============================================================
+       ★ 法球
+       ============================================================ */
     .orb-ring {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
+      width: 180px; height: 180px; border-radius: 50%;
+      display: grid; place-items: center;
       background:
         radial-gradient(circle, rgba(255,255,255,0.18), rgba(255,255,255,0.03) 48%, transparent 55%),
         conic-gradient(from 90deg, rgba(140,183,255,0.65), rgba(255,255,255,0.08), rgba(147,255,221,0.35), rgba(140,183,255,0.65));
       box-shadow: 0 0 60px rgba(126, 170, 255, 0.12);
       position: relative;
     }
-
     .orb-ring::before {
-      content: "";
-      position: absolute;
-      inset: 10px;
-      border-radius: 50%;
-      background: rgba(6,7,11,0.72);
-      border: 1px solid rgba(255,255,255,0.08);
+      content: ""; position: absolute; inset: 10px; border-radius: 50%;
+      background: rgba(6,7,11,0.72); border: 1px solid rgba(255,255,255,0.08);
     }
-
     #center-icon {
-      position: relative;
-      z-index: 2;
-      font-size: 4.8rem;
-      opacity: 0;
-      transform: scale(0.5);
+      position: relative; z-index: 2; font-size: 4.8rem;
+      opacity: 0; transform: scale(0.5);
       transition: opacity 0.5s ease, transform 0.5s ease;
-      user-select: none;
-      cursor: pointer;
+      user-select: none; cursor: pointer;
     }
-
     .figure8-hint { animation: figure8 2s infinite ease-in-out; }
     @keyframes figure8 {
+      0% { transform: translate(0,0) scale(1); }
+      25% { transform: translate(34px,-16px) scale(1.08); }
+      50% { transform: translate(0,0) scale(1); }
+      75% { transform: translate(-34px,-16px) scale(1.08); }
+      100% { transform: translate(0,0) scale(1); }
+    }
+
+    /* ============================================================
+       ★ 動作提示動畫（元素專屬）
+       ============================================================ */
+    /* 風：左右快速橫掃 */
+    @keyframes windMotion {
+      0% { transform: translateX(0) scale(1); }
+      20% { transform: translateX(40px) scale(1.05); }
+      40% { transform: translateX(-40px) scale(1.05); }
+      60% { transform: translateX(40px) scale(1.05); }
+      80% { transform: translateX(-40px) scale(1.05); }
+      100% { transform: translateX(0) scale(1); }
+    }
+    /* 火：向上衝 */
+    @keyframes fireMotion {
+      0% { transform: translateY(0) scale(1); }
+      30% { transform: translateY(-30px) scale(1.12); }
+      55% { transform: translateY(-36px) scale(1.08); }
+      75% { transform: translateY(-28px) scale(1.1); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    /* 水：緩慢左右波動 */
+    @keyframes waterMotion {
       0% { transform: translate(0, 0) scale(1); }
-      25% { transform: translate(34px, -16px) scale(1.08); }
+      25% { transform: translate(28px, 8px) scale(1.04); }
       50% { transform: translate(0, 0) scale(1); }
-      75% { transform: translate(-34px, -16px) scale(1.08); }
+      75% { transform: translate(-28px, 8px) scale(1.04); }
       100% { transform: translate(0, 0) scale(1); }
     }
+    /* 土：向下劈砸 */
+    @keyframes earthMotion {
+      0% { transform: translateY(0) scale(1); }
+      15% { transform: translateY(-24px) scale(1.06); }
+      45% { transform: translateY(20px) scale(0.95); }
+      60% { transform: translateY(18px) scale(0.95); }
+      80% { transform: translateY(0) scale(1.02); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    .hint-wind { animation: windMotion 1.4s infinite ease-in-out; }
+    .hint-fire { animation: fireMotion 1.6s infinite ease-out; }
+    .hint-water { animation: waterMotion 2.4s infinite ease-in-out; }
+    .hint-earth { animation: earthMotion 1.8s infinite ease-in-out; }
 
+    /* ============================================================
+       ★ 步驟指示器
+       ============================================================ */
     .spell-badge {
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: rgba(140,183,255,0.12);
-      border: 1px solid rgba(140,183,255,0.24);
-      color: #dbe7ff;
-      font-size: 0.84rem;
-      letter-spacing: 1px;
+      padding: 8px 14px; border-radius: 999px;
+      background: rgba(140,183,255,0.12); border: 1px solid rgba(140,183,255,0.24);
+      color: #dbe7ff; font-size: 0.84rem; letter-spacing: 1px;
     }
-
     .progress-steps {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      width: 100%; display: grid; grid-template-columns: repeat(4,1fr); gap: 8px;
     }
-
     .step-chip {
-      padding: 10px 8px;
-      text-align: center;
-      border-radius: 14px;
-      font-size: 0.77rem;
-      letter-spacing: 0.5px;
-      color: var(--muted);
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
+      padding: 10px 8px; text-align: center; border-radius: 14px;
+      font-size: 0.77rem; letter-spacing: 0.5px; color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);
       transition: all 0.28s ease;
     }
-
-    .step-chip.active {
-      color: #fff;
-      border-color: rgba(140,183,255,0.28);
-      background: rgba(140,183,255,0.14);
-      transform: translateY(-2px);
-    }
-
-    .step-chip.done {
-      color: #b9ffe3;
-      border-color: rgba(126,240,192,0.22);
-      background: rgba(126,240,192,0.12);
-    }
+    .step-chip.active { color: #fff; border-color: rgba(140,183,255,0.28); background: rgba(140,183,255,0.14); transform: translateY(-2px); }
+    .step-chip.done { color: #b9ffe3; border-color: rgba(126,240,192,0.22); background: rgba(126,240,192,0.12); }
 
     .gesture-hint {
-      color: var(--muted);
-      font-size: 0.84rem;
-      text-align: center;
-      line-height: 1.5;
-      min-height: 38px;
+      color: var(--muted); font-size: 0.84rem; text-align: center;
+      line-height: 1.5; min-height: 38px;
     }
 
-    .meter-wrap {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .meter-label-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: var(--muted);
-      font-size: 0.8rem;
-    }
-
+    /* ============================================================
+       ★ 儀表
+       ============================================================ */
+    .meter-wrap { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+    .meter-label-row { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 0.8rem; }
     .meter {
-      width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
-      overflow: hidden;
+      width: 100%; height: 10px; border-radius: 999px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); overflow: hidden;
     }
-
     .meter-fill {
-      width: 0%;
-      height: 100%;
-      border-radius: inherit;
+      width: 0%; height: 100%; border-radius: inherit;
       background: linear-gradient(90deg, rgba(140,183,255,0.95), rgba(110,255,224,0.92));
-      box-shadow: 0 0 20px rgba(140,183,255,0.28);
-      transition: width 0.22s ease;
+      box-shadow: 0 0 20px rgba(140,183,255,0.28); transition: width 0.22s ease;
     }
 
     #status-text {
-      color: var(--text);
-      text-align: center;
-      line-height: 1.7;
-      min-height: 74px;
-      font-size: 1rem;
-      letter-spacing: 1px;
+      color: var(--text); text-align: center; line-height: 1.7;
+      min-height: 74px; font-size: 1rem; letter-spacing: 1px;
     }
+    #ritual-copy { color: var(--muted); text-align: center; line-height: 1.6; font-size: 0.9rem; }
 
-    #ritual-copy {
-      color: var(--muted);
-      text-align: center;
-      line-height: 1.6;
-      font-size: 0.9rem;
-    }
-
+    /* ============================================================
+       ★ 啟動按鈕
+       ============================================================ */
     #magic-btn {
-      width: 112px;
-      height: 112px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.18);
-      color: #fff;
-      font-size: 1.05rem;
-      letter-spacing: 3px;
-      cursor: pointer;
+      width: 112px; height: 112px; border-radius: 50%;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18);
+      color: #fff; font-size: 1.05rem; letter-spacing: 3px; cursor: pointer;
       box-shadow: 0 10px 35px rgba(0,0,0,0.36);
       transition: transform 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
-
     #magic-btn:active { transform: scale(0.97); }
-    .listening {
-      animation: pulse 1.5s infinite;
-      border-color: rgba(255,255,255,0.85) !important;
-    }
+    .listening { animation: pulse 1.5s infinite; border-color: rgba(255,255,255,0.85) !important; }
     @keyframes pulse {
       0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.26); }
       70% { box-shadow: 0 0 0 30px rgba(255,255,255,0); }
       100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
     }
 
+    /* ============================================================
+       ★ 刮刮樂卡片
+       ============================================================ */
     #result-card {
-      position: absolute;
-      z-index: 40;
-      width: min(90vw, 360px);
-      border-radius: 28px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.14);
-      text-align: center;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(40px);
-      transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 30px 60px rgba(0,0,0,0.55);
-      overflow: hidden;
-      padding: 28px 20px 22px;
-    }
-
-    #result-card.show {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
-
-    .ritual-kicker {
-      color: #cfdcff;
-      font-size: 0.86rem;
-      letter-spacing: 2px;
-      opacity: 0.92;
-    }
-
-    .ritual-line {
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.6;
-      min-height: 44px;
-    }
-
-    .scratch-container {
-      position: relative;
-      width: 260px;
-      height: 260px;
-      border-radius: 20px;
-      overflow: hidden;
-      margin: 20px auto 16px;
-      background: rgba(0, 0, 0, 0.24);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .scratch-reveal {
-      position: absolute;
+      position: fixed;
       inset: 0;
+      z-index: 40;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    #result-card.show { opacity: 1; pointer-events: auto; }
+
+    .result-inner {
+      width: min(90vw, 360px);
+      border-radius: 28px;
+      background: rgba(10,12,20,0.88);
+      border: 1px solid rgba(255,255,255,0.14);
+      text-align: center;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.55);
+      overflow: hidden;
+      padding: 28px 20px 22px;
+      transform: translateY(40px) scale(0.96);
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    #result-card.show .result-inner { transform: translateY(0) scale(1); }
+
+    .ritual-kicker { color: #cfdcff; font-size: 0.86rem; letter-spacing: 2px; opacity: 0.92; }
+    .ritual-line { margin-top: 10px; color: var(--muted); font-size: 0.9rem; line-height: 1.6; min-height: 44px; }
+
+    /* 刮刮樂容器 */
+    .scratch-container {
+      position: relative; width: 260px; height: 260px;
+      border-radius: 20px; overflow: hidden;
+      margin: 20px auto 16px;
+      background: rgba(0, 0, 0, 0.24);
+      border: 1px solid rgba(255,255,255,0.1);
+      cursor: crosshair;
+    }
+    .scratch-reveal {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center; gap: 8px;
       z-index: 1;
-      background:
-        radial-gradient(circle at top, rgba(255,255,255,0.09), transparent 36%),
-        rgba(255,255,255,0.03);
+      background: radial-gradient(circle at top, rgba(255,255,255,0.09), transparent 36%), rgba(255,255,255,0.03);
     }
 
-    .zodiac-icon { font-size: 3.5rem; filter: drop-shadow(0 0 16px rgba(255,255,255,0.24)); }
+    /* 星座圖片（圖片模式） */
+    .zodiac-img {
+      width: 120px; height: 120px; object-fit: contain;
+      filter: drop-shadow(0 0 18px rgba(255,255,255,0.3));
+      display: none; /* 預設隱藏，由 JS 控制 */
+    }
+    .scratch-container.image-mode .scratch-reveal {
+      padding: 0; gap: 0; background: rgba(5, 7, 12, 0.92);
+    }
+    .scratch-container.image-mode .zodiac-img {
+      display: block !important;
+      width: 100%; height: 100%; object-fit: cover;
+      border-radius: 20px; filter: none;
+    }
+    .scratch-container.image-mode .zodiac-symbol,
+    .scratch-container.image-mode .zodiac-title,
+    .scratch-container.image-mode .zodiac-element {
+      display: none !important;
+    }
+    /* emoji 模式 */
+    .zodiac-symbol {
+      font-size: 5rem;
+      filter: drop-shadow(0 0 16px rgba(255,255,255,0.28));
+      line-height: 1;
+      display: none;
+    }
     .zodiac-title { font-size: 1.75rem; letter-spacing: 4px; font-weight: 500; }
     .zodiac-element { font-size: 0.88rem; color: var(--muted); letter-spacing: 1px; }
     .save-hint { margin-top: 10px; color: #a6f2d0; font-size: 0.84rem; min-height: 22px; }
 
-    .scratch-progress {
-      margin-top: 12px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .scratch-progress-text {
-      font-size: 0.82rem;
-      color: var(--muted);
-      text-align: center;
-    }
-
     #scratch-canvas {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      touch-action: none;
-      cursor: pointer;
+      position: absolute; inset: 0; z-index: 2;
+      touch-action: none; cursor: crosshair;
     }
 
-    .card-actions {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 14px;
+    /* 刮完後的揭示爆光動畫 */
+    .reveal-flash {
+      position: absolute; inset: 0; z-index: 3;
+      background: radial-gradient(circle, rgba(255,255,255,0.9), transparent 70%);
+      opacity: 0; pointer-events: none; border-radius: 20px;
+      animation: none;
+    }
+    @keyframes revealFlash {
+      0% { opacity: 0; transform: scale(0.8); }
+      30% { opacity: 0.85; transform: scale(1.05); }
+      100% { opacity: 0; transform: scale(1.2); }
+    }
+    .reveal-flash.active { animation: revealFlash 0.8s ease-out forwards; }
+
+    /* 星粒子爆炸 */
+    .star-particle {
+      position: absolute; z-index: 4; pointer-events: none;
+      font-size: 1rem; animation: starBurst 1s ease-out forwards;
+    }
+    @keyframes starBurst {
+      0% { opacity: 1; transform: translate(0,0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.3); }
     }
 
-    .ghost-btn,
-    .solid-btn {
-      border-radius: 999px;
-      padding: 12px 20px;
-      border: 1px solid rgba(255,255,255,0.14);
-      color: #fff;
-      cursor: pointer;
-    }
+    .scratch-progress { margin-top: 12px; width: 100%; display: flex; flex-direction: column; gap: 8px; }
+    .scratch-progress-text { font-size: 0.82rem; color: var(--muted); text-align: center; }
 
+    .card-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .ghost-btn, .solid-btn {
+      border-radius: 999px; padding: 12px 20px;
+      border: 1px solid rgba(255,255,255,0.14); color: #fff; cursor: pointer;
+    }
     .ghost-btn { background: rgba(255,255,255,0.06); }
     .solid-btn { background: linear-gradient(135deg, rgba(134,173,255,0.35), rgba(93,255,210,0.18)); }
 
+    /* ============================================================
+       ★ 收藏冊按鈕
+       ============================================================ */
     #collection-btn {
-      position: fixed;
-      right: 24px;
-      bottom: 24px;
-      z-index: 30;
-      padding: 14px 18px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.06);
-      color: #fff;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      letter-spacing: 2px;
+      position: fixed; right: 24px; bottom: 24px; z-index: 30;
+      padding: 14px 18px; border-radius: 999px;
+      border: 1px solid var(--line); background: rgba(255,255,255,0.06);
+      color: #fff; cursor: pointer; box-shadow: var(--shadow); letter-spacing: 2px;
     }
 
+    /* ============================================================
+       ★ 模態視窗
+       ============================================================ */
     .overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 70;
+      position: fixed; inset: 0; z-index: 70;
       background: rgba(4, 6, 10, 0.78);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s ease;
-      padding: 20px;
-      overflow-y: auto;
+      display: flex; justify-content: center; align-items: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.35s ease; padding: 20px;
     }
-
     .overlay.show { opacity: 1; pointer-events: auto; }
 
-    .modal-content,
-    .auth-card {
+    .modal-content, .auth-card {
       width: min(92vw, 420px);
       max-height: min(84vh, 780px);
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 28px;
-      box-shadow: var(--shadow);
-      
-      overflow-x: hidden;
-      overflow-y: auto; 
-      -webkit-overflow-scrolling: touch;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 28px; box-shadow: var(--shadow); overflow: hidden;
     }
-
-    .modal-shell { padding: 24px 20px 22px; }
-
-    .modal-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
+    .modal-shell { padding: 24px 20px 22px; overflow-y: auto; max-height: min(84vh, 780px); }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
     .modal-title { font-size: 1.35rem; letter-spacing: 2px; }
     .close-btn {
-      border: none;
-      background: rgba(255,255,255,0.06);
-      border-radius: 12px;
-      width: 40px;
-      height: 40px;
-      color: var(--text);
-      cursor: pointer;
-      font-size: 1.3rem;
+      border: none; background: rgba(255,255,255,0.06); border-radius: 12px;
+      width: 40px; height: 40px; color: var(--text); cursor: pointer; font-size: 1.3rem;
     }
+    .collection-summary { color: var(--muted); line-height: 1.6; margin-bottom: 16px; font-size: 0.9rem; }
 
-    .collection-summary {
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 16px;
-      font-size: 0.9rem;
-    }
-
+    /* ============================================================
+       ★ 收集冊格子（元素底色玻璃）
+       ============================================================ */
     .zodiac-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      overflow-y: auto;
-      max-height: 52vh;
-      padding-right: 2px;
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;
+      overflow-y: auto; max-height: 52vh; padding-right: 2px;
+      grid-auto-rows: 1fr; align-items: stretch;
     }
-
     .zodiac-item {
-      aspect-ratio: 1 / 1;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.03);
-      border: 1px dashed rgba(255,255,255,0.12);
+      aspect-ratio: 1/1; min-width: 0; min-height: 0; border-radius: 18px;
+      background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.12);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      color: rgba(255,255,255,0.35); gap: 8px; padding: 12px;
+      transition: all 0.3s ease; overflow: hidden; position: relative; isolation: isolate;
+    }
+    /* 未解鎖：問號 */
+    .zodiac-item .lock-symbol { font-size: 1.5rem; opacity: 0.35; }
+
+    /* 已解鎖：元素底色玻璃 */
+    .zodiac-item.unlocked { color: rgba(255,255,255,0.96); border-style: solid; }
+    .zodiac-item.unlocked.el-fire {
+      background: var(--fire-color); border-color: var(--fire-border);
+      box-shadow: inset 0 0 28px rgba(222,87,33,0.18), 0 0 16px rgba(222,87,33,0.12);
+    }
+    .zodiac-item.unlocked.el-water {
+      background: var(--water-color); border-color: var(--water-border);
+      box-shadow: inset 0 0 28px rgba(32,100,200,0.18), 0 0 16px rgba(52,118,222,0.12);
+    }
+    .zodiac-item.unlocked.el-wind {
+      background: var(--wind-color); border-color: var(--wind-border);
+      box-shadow: inset 0 0 28px rgba(20,160,120,0.18), 0 0 16px rgba(33,178,143,0.12);
+    }
+    .zodiac-item.unlocked.el-earth {
+      background: var(--earth-color); border-color: var(--earth-border);
+      box-shadow: inset 0 0 28px rgba(100,72,40,0.18), 0 0 16px rgba(132,104,64,0.12);
+    }
+
+    /* 收集冊：星座符號 emoji 顯示 */
+    .zodiac-item .zodiac-sym-big { 
+      font-size: 2rem; 
+      line-height: 1.2; 
+      height: auto;
+      flex-shrink: 0;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      color: rgba(255,255,255,0.35);
-      gap: 8px;
-      padding: 8px;
+      justify-content: center;
+    }
+    /* 收集冊：圖片模式 */
+    .zodiac-item .card-img {
+      width: 56px; height: 56px; object-fit: contain; display: none;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,0.2));
+      flex-shrink: 0;
+    }
+    .zodiac-item.img-mode { padding: 0; gap: 0; }
+    .zodiac-item.img-mode .card-img {
+      display: block; position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover;
+      border-radius: inherit; filter: none;
+    }
+    .zodiac-item.img-mode .zodiac-sym-big,
+    .zodiac-item.img-mode .item-name { display: none !important; }
+
+    .item-name { 
+      font-size: 0.78rem; 
+      text-align: center; 
+      line-height: 1.3; 
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+      min-height: 1.5em;
+      max-width: 100%;
+      overflow-wrap: anywhere;
     }
 
-    .zodiac-item.unlocked {
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.26);
-      color: rgba(255,255,255,0.96);
-      box-shadow: inset 0 0 24px rgba(255,255,255,0.05);
-    }
-
-    .item-name { font-size: 0.84rem; text-align: center; line-height: 1.3; }
-
-    .auth-card { padding: 22px 20px; }
+    /* ============================================================
+       ★ 登入表單
+       ============================================================ */
+    .auth-card { padding: 22px 20px; overflow-y: auto; }
     .auth-title { font-size: 1.4rem; margin-bottom: 8px; letter-spacing: 2px; }
     .auth-subtitle { color: var(--muted); line-height: 1.6; font-size: 0.9rem; margin-bottom: 18px; }
-
-    .tabs {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
+    .tabs { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin-bottom: 16px; }
     .tab-btn {
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.04);
-      color: var(--text);
-      padding: 11px 14px;
-      border-radius: 14px;
-      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.10); background: rgba(255,255,255,0.04);
+      color: var(--text); padding: 11px 14px; border-radius: 14px; cursor: pointer;
     }
-
-    .tab-btn.active {
-      background: linear-gradient(135deg, rgba(140,183,255,0.24), rgba(147,255,221,0.18));
-      border-color: rgba(140,183,255,0.28);
-    }
-
+    .tab-btn.active { background: linear-gradient(135deg, rgba(140,183,255,0.24), rgba(147,255,221,0.18)); border-color: rgba(140,183,255,0.28); }
     .form-group { margin-bottom: 12px; }
     .form-label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 0.85rem; }
-
     .field {
-      width: 100%;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
-      color: #fff;
-      padding: 14px 14px;
-      outline: none;
+      width: 100%; border-radius: 14px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05); color: #fff; padding: 14px; outline: none;
     }
-
     .field::placeholder { color: rgba(255,255,255,0.34); }
-
-    .helper-note {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 0.82rem;
-      line-height: 1.6;
+    .auth-message { min-height: 24px; margin: 12px 0; font-size: 0.85rem; line-height: 1.5; color: var(--muted); }
+    .auth-message.error { color: var(--danger); }
+    .auth-message.success { color: var(--success); }
+    .submit-btn {
+      width: 100%; border: none; border-radius: 16px; padding: 14px 16px;
+      background: linear-gradient(135deg, rgba(140,183,255,0.46), rgba(110,255,224,0.24));
+      color: #fff; cursor: pointer; font-weight: 600; letter-spacing: 1px;
     }
+    .helper-note { margin-top: 14px; color: var(--muted); font-size: 0.82rem; line-height: 1.6; }
 
-    .element-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-top: 14px;
-    }
-
+    /* ============================================================
+       ★ 元素選擇彈窗
+       ============================================================ */
+    .element-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-top: 14px; }
     .element-btn {
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.05);
-      color: #fff;
-      border-radius: 18px;
-      padding: 16px 12px;
-      min-height: 90px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: transform 0.2s ease, background 0.2s ease;
+      border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);
+      color: #fff; border-radius: 18px; padding: 16px 12px; min-height: 90px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease;
     }
-
     .element-btn:active { transform: scale(0.98); }
-
     .element-icon { font-size: 1.8rem; }
     .element-text { font-size: 0.88rem; color: var(--muted); text-align: center; line-height: 1.35; }
 
+    /* ============================================================
+       ★ 顯示模式切換按鈕
+       ============================================================ */
+    .display-toggle {
+      display: flex; gap: 8px; align-items: center;
+      padding: 8px 14px; border-radius: 999px;
+      border: 1px solid var(--line); background: rgba(255,255,255,0.04);
+      font-size: 0.8rem; color: var(--muted); cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .display-toggle:active { background: rgba(255,255,255,0.08); }
+    .display-toggle .toggle-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0;
+    }
+
+    /* ============================================================
+       ★ Toast
+       ============================================================ */
     .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 92px;
+      position: fixed; left: 50%; bottom: 92px;
       transform: translateX(-50%) translateY(20px);
-      z-index: 90;
-      background: rgba(14,18,28,0.86);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: #fff;
-      padding: 12px 16px;
-      border-radius: 999px;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.28s ease;
-      box-shadow: var(--shadow);
-      max-width: calc(100vw - 40px);
-      text-align: center;
-      line-height: 1.5;
+      z-index: 90; background: rgba(14,18,28,0.86);
+      border: 1px solid rgba(255,255,255,0.12); color: #fff;
+      padding: 12px 16px; border-radius: 999px;
+      opacity: 0; pointer-events: none; transition: all 0.28s ease;
+      box-shadow: var(--shadow); max-width: calc(100vw - 40px);
+      text-align: center; line-height: 1.5;
     }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
+    /* ============================================================
+       ★ 動作偵測狀態視覺指示
+       ============================================================ */
+    .motion-status {
+      display: flex; gap: 6px; align-items: center; justify-content: center;
+      font-size: 0.78rem; color: var(--muted); margin-top: 4px;
     }
+    .motion-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,0.2); transition: all 0.25s ease;
+    }
+    .motion-dot.lit-fire { background: #ff7a18; box-shadow: 0 0 8px #ff7a18; }
+    .motion-dot.lit-water { background: #38b6ff; box-shadow: 0 0 8px #38b6ff; }
+    .motion-dot.lit-wind { background: #38ef7d; box-shadow: 0 0 8px #38ef7d; }
+    .motion-dot.lit-earth { background: #c9972a; box-shadow: 0 0 8px #c9972a; }
 
+    /* ============================================================
+       ★ 響應式
+       ============================================================ */
     @media (max-width: 720px) {
-      body {
-        align-items: flex-start;
-      }
-      .top-bar {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-      }
+      body { align-items: flex-start; padding-top: calc(var(--safe-top) + 140px); }
+      .top-bar { flex-direction: column; align-items: stretch; gap: 10px; }
       .brand, .top-actions { width: 100%; }
-      .top-actions { justify-content: space-between; }
-      .user-panel {
-        top: calc(var(--safe-top) + 12px);
-        left: auto;
-        right: calc(var(--safe-right) + 12px);
-        bottom: auto;
-        width: min(280px, calc(100vw - 36px));
-        max-height: calc(100vh - calc(var(--safe-top) + 140px));
-      }
-      #ui-container {
-        width: 100%;
-        margin-top: 136px;
-        border-radius: 24px;
-        padding: 22px 16px 18px;
-      }
+      .top-actions { justify-content: space-between; gap: 8px; }
+      .top-actions > * { flex: 1 1 calc(50% - 8px); min-width: 0; }
+      .top-actions #mode-badge { flex-basis: 100%; text-align: center; }
+      .display-toggle, .chip-btn { justify-content: center; width: 100%; }
+      #ui-container { width: 100%; border-radius: 24px; padding: 22px 16px 18px; }
       .brand-title { font-size: 0.95rem; }
       .brand-subtitle { font-size: 0.7rem; }
-      .progress-steps { grid-template-columns: repeat(2, 1fr); }
+      .progress-steps { grid-template-columns: repeat(2,1fr); }
       .orb-ring { width: 154px; height: 154px; }
       #center-icon { font-size: 4.1rem; }
       #status-text { min-height: 66px; font-size: 0.95rem; }
       .scratch-container { width: min(74vw, 260px); height: min(74vw, 260px); }
       #scratch-canvas { width: 100%; height: 100%; }
-      .overlay { align-items: flex-end; padding: 0; }
-      .modal-content, .auth-card {
-        width: 100%;
-        max-width: none;
-        max-height: min(88dvh, 88vh);
+
+      /* 收集冊 + 元素選擇 → 從底部滑入 */
+      #collection-modal, #element-modal { align-items: flex-end; padding: 0; }
+      #collection-modal .modal-content,
+      #element-modal .modal-content {
+        width: 100%; max-width: none; max-height: min(88dvh, 88vh);
         border-radius: 24px 24px 0 0;
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-        transform: translateY(28px);
-        transition: transform 0.35s ease;
-        padding-bottom: calc(var(--safe-bottom) + 24px);
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+        transform: translateY(28px); transition: transform 0.35s ease;
+        padding-bottom: calc(var(--safe-bottom) + 10px);
       }
-      .overlay.show .modal-content,
-      .overlay.show .auth-card { transform: translateY(0); }
-      .auth-card { padding: 20px 16px; }
+      #collection-modal.show .modal-content,
+      #element-modal.show .modal-content { transform: translateY(0); }
+
+      /* 登入 Modal → 垂直置中 */
+      #auth-modal { align-items: center; padding: 16px; }
+      #auth-modal .auth-card {
+        width: 100%; max-width: 420px;
+        max-height: min(90dvh, 90vh);
+        border-radius: 24px;
+        overflow-y: auto;
+        padding: 20px 16px calc(var(--safe-bottom) + 16px);
+      }
+
       .modal-shell { padding: 20px 16px calc(var(--safe-bottom) + 14px); }
-      .zodiac-grid { grid-template-columns: repeat(3, 1fr); max-height: 48dvh; }
+      .zodiac-grid { grid-template-columns: repeat(3, minmax(0,1fr)); max-height: 48dvh; gap: 10px; }
       #collection-btn { right: calc(var(--safe-right) + 14px); bottom: calc(var(--safe-bottom) + 14px); }
-      #image-mode-btn { bottom: calc(var(--safe-bottom) + 70px); right: calc(var(--safe-right) + 14px); }
       .toast { bottom: calc(var(--safe-bottom) + 82px); }
     }
 
@@ -785,7 +707,6 @@
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
       }
     }
   </style>
@@ -794,6 +715,7 @@
   <div id="particle-field"></div>
   <div id="light-layer"></div>
 
+  <!-- ★ 頂部導覽 -->
   <div class="top-bar">
     <div class="brand">
       <div class="brand-mark">✦</div>
@@ -803,12 +725,20 @@
       </div>
     </div>
     <div class="top-actions">
-      <span id="mode-badge" class="chip none">未連接資料庫</span>
+      <span id="mode-badge" class="chip local">本機收藏模式</span>
+      <!-- 圖片 / emoji 切換 -->
+      <button id="display-toggle-btn" class="display-toggle" title="切換顯示模式">
+        <span class="toggle-dot"></span>
+        <span id="display-mode-label">emoji 模式</span>
+      </button>
+      <!-- 登入前顯示「登入」，登入後顯示頭像按鈕 -->
       <button id="auth-open-btn" class="chip-btn">登入／註冊</button>
+      <button id="user-avatar-btn" class="chip-btn" style="display:none;" title="查看個人資料">👤</button>
     </div>
   </div>
 
-  <div id="user-panel" class="user-panel hidden">
+  <!-- ★ 使用者資訊 -->
+  <div id="user-panel" class="user-panel">
     <div class="user-panel-header">
       <div>
         <strong id="user-name">未登入旅人</strong>
@@ -819,10 +749,11 @@
     <div id="sync-status" class="user-meta">尚未啟用同步</div>
     <div class="mini-stats">
       <div class="stat-pill">收藏進度：<span id="collection-count">0</span> / 12</div>
-      <div class="stat-pill">模式：<span id="storage-label">無</span></div>
+      <div class="stat-pill">模式：<span id="storage-label">本機</span></div>
     </div>
   </div>
 
+  <!-- ★ 主操作介面 -->
   <div id="ui-container">
     <div class="progress-steps" id="progress-steps">
       <div class="step-chip active" data-step="login">登入</div>
@@ -836,45 +767,61 @@
     </div>
     <button id="magic-btn">啟動</button>
     <div id="status-text">請先登入，讓旅人的名字寫入星圖，再喚醒你的元素印記。</div>
-    <div class="gesture-hint" id="gesture-hint">登入後，先說出元素，再將手機做出對應元素感測；不支援語音時會自動開啟元素選單。</div>
+    <div class="gesture-hint" id="gesture-hint">登入後，先說出元素，再將手機畫出對應動作；不支援語音時會自動開啟元素選單。</div>
     <div class="meter-wrap">
       <div class="meter-label-row">
-        <span>儀式蓄能</span>
+        <span>動作蓄能</span>
         <span id="motion-meter-text">0 / 4</span>
       </div>
       <div class="meter"><div class="meter-fill" id="motion-meter-fill"></div></div>
-    </div>
-    <div id="ritual-copy">新版咒語敘述：先呼喚元素，再做出元素手勢，最後刮開封印取得星座卡牌。</div>
-  </div>
-
-  <div id="result-card">
-    <div class="ritual-kicker" id="zodiac-desc">元素共振中</div>
-    <div class="ritual-line" id="ritual-line">抹去星霧封印，讓你的星座卡牌顯形。</div>
-
-    <div class="scratch-container">
-      <div class="scratch-reveal">
-        <div class="zodiac-icon" id="zodiac-icon">✨</div>
-        <div class="zodiac-title" id="zodiac-name">未解鎖</div>
-        <div class="zodiac-element" id="zodiac-subtitle">星圖尚未顯影</div>
+      <div class="motion-status" id="motion-dots">
+        <span class="motion-dot" id="dot-0"></span>
+        <span class="motion-dot" id="dot-1"></span>
+        <span class="motion-dot" id="dot-2"></span>
+        <span class="motion-dot" id="dot-3"></span>
+        <span id="motion-hint-text" style="margin-left:4px;">等待動作</span>
       </div>
-      <canvas id="scratch-canvas" width="260" height="260"></canvas>
     </div>
+    <div id="ritual-copy">新的咒語敘述已改成更有儀式感的版本：先呼喚元素，再以法杖描出無限軌跡，最後刮開封印取得星座卡牌。</div>
+  </div>
 
-    <div class="zodiac-element">抹去星霧後，卡牌會自動寫入你的收藏紀錄。</div>
-    <div class="scratch-progress">
-      <div class="meter"><div class="meter-fill" id="scratch-progress-fill"></div></div>
-      <div class="scratch-progress-text" id="scratch-progress-text">封印解除 0%</div>
-    </div>
-    <div class="save-hint" id="save-hint"></div>
-    <div class="card-actions">
-      <button class="ghost-btn" id="view-collection-btn">查看收藏</button>
-      <button class="solid-btn" onclick="window.resetMagic()">再次校準</button>
+  <!-- ★ 刮刮樂結果卡（全螢幕覆蓋） -->
+  <div id="result-card">
+    <div class="result-inner">
+      <div class="ritual-kicker" id="zodiac-desc">元素共振中</div>
+      <div class="ritual-line" id="ritual-line">抹去星霧封印，讓你的星座卡牌顯形。</div>
+
+      <div class="scratch-container" id="scratch-container">
+        <div class="scratch-reveal">
+          <!-- 圖片模式：星座圖片（接資料庫） -->
+          <img id="zodiac-img" class="zodiac-img" src="" alt="" />
+          <!-- emoji 模式：星座符號 -->
+          <div class="zodiac-symbol" id="zodiac-symbol">♈</div>
+          <div class="zodiac-title" id="zodiac-name">未解鎖</div>
+          <div class="zodiac-element" id="zodiac-subtitle">星圖尚未顯影</div>
+        </div>
+        <canvas id="scratch-canvas" width="260" height="260"></canvas>
+        <!-- 揭示閃光 -->
+        <div class="reveal-flash" id="reveal-flash"></div>
+      </div>
+
+      <div class="zodiac-element">抹去星霧後，卡牌會自動寫入你的收藏紀錄。</div>
+      <div class="scratch-progress">
+        <div class="meter"><div class="meter-fill" id="scratch-progress-fill"></div></div>
+        <div class="scratch-progress-text" id="scratch-progress-text">封印解除 0%</div>
+      </div>
+      <div class="save-hint" id="save-hint"></div>
+      <div class="card-actions">
+        <button class="ghost-btn" id="view-collection-btn">查看收藏</button>
+        <button class="solid-btn" onclick="resetMagic()">再次校準</button>
+      </div>
     </div>
   </div>
 
+  <!-- ★ 收藏冊按鈕 -->
   <button id="collection-btn">✨ 星軌冊</button>
-  <button id="image-mode-btn" style="position:fixed;bottom:calc(var(--safe-bottom) + 80px);right:calc(var(--safe-right) + 14px);z-index:25;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#9de8ff;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:0.9rem;transition:all 0.2s ease;">📸 圖片模式</button>
 
+  <!-- ★ 收藏冊 Modal -->
   <div id="collection-modal" class="overlay">
     <div class="modal-content">
       <div class="modal-shell">
@@ -890,38 +837,34 @@
     </div>
   </div>
 
+  <!-- ★ 登入 Modal -->
   <div id="auth-modal" class="overlay show">
     <div class="auth-card">
       <div class="auth-title">旅人登入</div>
-      <div class="auth-subtitle">請填入帳號設定，現場參展者的帳號與收藏就能跨裝置同步。</div>
-
+      <div class="auth-subtitle">可先用本機模式測試；若填入 Supabase 設定，現場參展者的帳號與收藏就能跨裝置同步。</div>
       <div class="tabs">
         <button id="tab-login" class="tab-btn active">登入</button>
         <button id="tab-register" class="tab-btn">註冊</button>
       </div>
-
-      <div class="form-group" id="reg-group" style="display:none;">
-        <label class="form-label" for="reg-name">顯示名稱</label>
-        <input id="reg-name" class="field" type="text" placeholder="例如：星圖旅人 A01" autocomplete="nickname" enterkeyhint="next" />
+      <div class="form-group" id="display-name-group" style="display:none;">
+        <label class="form-label" for="display-name">顯示名稱</label>
+        <input id="display-name" class="field" type="text" placeholder="例如：星圖旅人 A01" autocomplete="nickname" enterkeyhint="next" />
       </div>
-
       <div class="form-group">
-        <label class="form-label" for="auth-email">Email</label>
-        <input id="auth-email" class="field" type="email" placeholder="visitor@example.com" autocomplete="email" inputmode="email" enterkeyhint="next" />
+        <label class="form-label" for="email">Email</label>
+        <input id="email" class="field" type="email" placeholder="visitor@example.com" autocomplete="email" inputmode="email" enterkeyhint="next" />
       </div>
-
       <div class="form-group">
-        <label class="form-label" for="auth-password">密碼</label>
-        <input id="auth-password" class="field" type="password" placeholder="至少 6 碼" autocomplete="current-password" enterkeyhint="done" />
+        <label class="form-label" for="password">密碼</label>
+        <input id="password" class="field" type="password" placeholder="至少 6 碼" autocomplete="current-password" enterkeyhint="done" />
       </div>
-
-      <button id="submit-auth" class="submit-btn">進入儀式</button>
-      <div class="helper-note">
-        若尚未串接雲端資料庫，請先將本專案部署至 GitHub Pages 並設置密鑰。
-      </div>
+      <div id="auth-message" class="auth-message">請先登入或註冊，卡牌才能寫入你的旅人檔案。</div>
+      <button id="submit-auth" class="submit-btn">登入並進入儀式</button>
+      <div class="helper-note">若尚未串接雲端資料庫，本頁會自動使用本機模式儲存測試資料。正式上線時，請填入 Supabase 設定並建立資料表。</div>
     </div>
   </div>
 
+  <!-- ★ 元素選擇 Modal -->
   <div id="element-modal" class="overlay">
     <div class="modal-content">
       <div class="modal-shell">
@@ -946,23 +889,50 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+  /* ================================================================
+     ██████  ███████ ████████ ████████ ██ ███    ██  ██████  ███████
+     ██      ██         ██       ██    ██ ████   ██ ██       ██
+     ███████ █████      ██       ██    ██ ██ ██  ██ ██   ███ ███████
+          ██ ██         ██       ██    ██ ██  ██ ██ ██    ██      ██
+     ██████  ███████    ██       ██    ██ ██   ████  ██████  ███████
+     ================================================================
+
+     ┌─────────────────────────────────────────────────────────────┐
+     │  ★ 區塊 1：Supabase 設定（正式上線前在此填入）               │
+     └─────────────────────────────────────────────────────────────┘ */
     window.APP_CONFIG = window.APP_CONFIG || {
-      supabaseUrl: '%%SUPABASE_URL%%',
-      supabaseAnonKey: '%%SUPABASE_ANON_KEY%%'
+      supabaseUrl: 'https://fyumbmwacjlqdnjymdhi.supabase.co',
+      supabaseAnonKey: 'sb_publishable_ZElK-ORl5Ns9eBCXx0NwOQ_-xVrmYvb',
+      supabaseBucket: 'zodiac-cards',
+      zodiacAssetsTable: 'zodiac_assets'
     };
 
-    const allZodiacs = [
-      '牡羊座', '金牛座', '雙子座', '巨蟹座',
-      '獅子座', '處女座', '天秤座', '天蠍座',
-      '射手座', '摩羯座', '水瓶座', '雙魚座'
-    ];
+    const SUPABASE_SCHEMA_SQL = `-- 建議先在 Supabase SQL Editor 執行
+create table if not exists public.profiles (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  email text unique,
+  display_name text not null,
+  updated_at timestamptz not null default now()
+);
 
-    // ── Supabase Storage 圖片URL基礎路徑 ──
-    const SUPABASE_URL = window.APP_CONFIG.supabaseUrl;
-    const SUPABASE_BUCKET = 'zodiac-cards';
-    
-    // ── 星座名稱到圖片檔名的映射 ──
-    const zodiacImages = {
+create table if not exists public.user_cards (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  zodiac_name text not null,
+  element_key text not null check (element_key in ('fire','water','wind','earth')),
+  unlocked_at timestamptz not null default now(),
+  primary key (user_id, zodiac_name)
+);
+
+create table if not exists public.zodiac_assets (
+  zodiac_name text primary key,
+  image_url text,
+  storage_path text,
+  is_active boolean not null default true,
+  updated_at timestamptz not null default now()
+);`;
+
+    const SUPABASE_BUCKET = window.APP_CONFIG.supabaseBucket || 'zodiac-cards';
+    const ZODIAC_STORAGE_FILES = {
       '牡羊座': 'aries.png',
       '金牛座': 'taurus.png',
       '雙子座': 'gemini.png',
@@ -977,6 +947,101 @@
       '雙魚座': 'pisces.png'
     };
 
+    const ZODIAC_IMAGE_URLS = {
+      '牡羊座': '',
+      '金牛座': '',
+      '雙子座': '',
+      '巨蟹座': '',
+      '獅子座': '',
+      '處女座': '',
+      '天秤座': '',
+      '天蠍座': '',
+      '射手座': '',
+      '摩羯座': '',
+      '水瓶座': '',
+      '雙魚座': ''
+    };
+
+    window.getSupabaseSchemaSQL = () => SUPABASE_SCHEMA_SQL;
+
+    function getSupabasePublicImageUrl(zodiacName) {
+      const fileName = ZODIAC_STORAGE_FILES[zodiacName];
+      const baseUrl = window.APP_CONFIG.supabaseUrl;
+      if (!fileName || !baseUrl || baseUrl.includes('{{')) return '';
+      return `${baseUrl.replace(/\/$/, '')}/storage/v1/object/public/${SUPABASE_BUCKET}/${fileName}`;
+    }
+
+    function updateZodiacImages(urlMap) {
+      Object.assign(ZODIAC_IMAGE_URLS, urlMap || {});
+    }
+
+    function getZodiacImageUrl(zodiacName) {
+      return ZODIAC_IMAGE_URLS[zodiacName] || getSupabasePublicImageUrl(zodiacName) || '';
+    }
+
+    async function hydrateZodiacImagesFromSupabase() {
+      if (!state?.supabase) return;
+      if (state.zodiacImageLoadPromise) return state.zodiacImageLoadPromise;
+      if (state.zodiacImagesLoaded) return;
+
+      state.zodiacImageLoadPromise = (async () => {
+        try {
+          const tableName = window.APP_CONFIG.zodiacAssetsTable || 'zodiac_assets';
+          const { data, error } = await state.supabase
+            .from(tableName)
+            .select('zodiac_name, image_url, storage_path, is_active');
+
+          if (!error && Array.isArray(data)) {
+            data
+              .filter(row => row && row.zodiac_name && row.is_active !== false)
+              .forEach(row => {
+                if (row.image_url) {
+                  ZODIAC_IMAGE_URLS[row.zodiac_name] = row.image_url;
+                } else if (row.storage_path && window.APP_CONFIG.supabaseUrl && !window.APP_CONFIG.supabaseUrl.includes('{{')) {
+                  ZODIAC_IMAGE_URLS[row.zodiac_name] = `${window.APP_CONFIG.supabaseUrl.replace(/\/$/, '')}/storage/v1/object/public/${SUPABASE_BUCKET}/${String(row.storage_path).replace(/^\/+/, '')}`;
+                }
+              });
+          }
+        } catch (error) {
+          console.warn('讀取星座圖片設定失敗，改用 Supabase Storage 預設路徑。', error);
+        } finally {
+          state.zodiacImagesLoaded = true;
+          state.zodiacImageLoadPromise = null;
+          if (state.displayMode === 'image') {
+            renderCollection();
+            if (state.targetZodiac) updateScratchReveal(state.targetZodiac);
+          }
+        }
+      })();
+
+      return state.zodiacImageLoadPromise;
+    }
+
+  /* ┌─────────────────────────────────────────────────────────────┐
+     │  ★ 區塊 3：12 星座對應資料（符號、元素）                    │
+     └─────────────────────────────────────────────────────────────┘ */
+    const ZODIAC_DATA = {
+      '牡羊座': { symbol: '♈', element: 'fire' },
+      '金牛座': { symbol: '♉', element: 'earth' },
+      '雙子座': { symbol: '♊', element: 'wind' },
+      '巨蟹座': { symbol: '♋', element: 'water' },
+      '獅子座': { symbol: '♌', element: 'fire' },
+      '處女座': { symbol: '♍', element: 'earth' },
+      '天秤座': { symbol: '♎', element: 'wind' },
+      '天蠍座': { symbol: '♏', element: 'water' },
+      '射手座': { symbol: '♐', element: 'fire' },
+      '摩羯座': { symbol: '♑', element: 'earth' },
+      '水瓶座': { symbol: '♒', element: 'wind' },
+      '雙魚座': { symbol: '♓', element: 'water' }
+    };
+
+    const allZodiacs = Object.keys(ZODIAC_DATA);
+
+  /* ┌─────────────────────────────────────────────────────────────┐
+     │  ★ 區塊 4：四大元素設定                                     │
+     │  可修改：name/icon/gradient/spellHint/ritualTitle/          │
+     │          ritualLine/releaseText/aliases/zodiacs             │
+     └─────────────────────────────────────────────────────────────┘ */
     const elementZodiacs = {
       fire: {
         key: 'fire',
@@ -984,9 +1049,15 @@
         icon: '🔥',
         color: 'rgba(222, 87, 33, 0.72)',
         gradient: ['#ff7a18', '#ffb347'],
+        // ─ 咒語文字（可自由修改） ─
+        spellHint: '請吟誦「焰」或火象星座之名',
         ritualTitle: '灼光巡行，熾焰應誓。',
-        ritualLine: '焰脈已點燃，請高舉法杖（向上加速），讓火象星座自烈光中現身。',
+        ritualLine: '焰脈已點燃。手持法杖，突然垂直向上高舉過頭，在最高點停頓一瞬間。',
         releaseText: '火象星圖已鬆動，抹去封印即可收下你的焰系卡牌。',
+        // ─ 動作引導提示 ─
+        motionHint: '🔥 快速向上高舉法杖，在最高點停頓！',
+        motionClass: 'hint-fire',
+        // ─ 語音辨識關鍵字 ─
         aliases: ['火', '焰', '牡羊', '獅子', '射手'],
         zodiacs: ['牡羊座', '獅子座', '射手座']
       },
@@ -996,9 +1067,12 @@
         icon: '💧',
         color: 'rgba(52, 118, 222, 0.70)',
         gradient: ['#2193b0', '#6dd5ed'],
+        spellHint: '請吟誦「潮」或水象星座之名',
         ritualTitle: '潮聲回應，深海立誓。',
-        ritualLine: '潮汐已與你共鳴，如波浪般推動手機，讓水象星座從霧潮之中浮現。',
+        ritualLine: '潮汐已與你共鳴。手臂放鬆，在前方空中緩慢劃出一個巨大的 ∞ 字型。',
         releaseText: '水象星圖已甦醒，刮開星霧後將直接寫入你的收藏檔案。',
+        motionHint: '💧 緩慢左右擺動法杖，畫出 ∞ 的波浪軌跡。',
+        motionClass: 'hint-water',
         aliases: ['水', '潮', '巨蟹', '天蠍', '雙魚'],
         zodiacs: ['巨蟹座', '天蠍座', '雙魚座']
       },
@@ -1008,9 +1082,12 @@
         icon: '🌪️',
         color: 'rgba(33, 178, 143, 0.68)',
         gradient: ['#11998e', '#38ef7d'],
+        spellHint: '請吟誦「嵐」或風象星座之名',
         ritualTitle: '風紋振翼，流界共鳴。',
-        ritualLine: '嵐紋已甦醒，請水平旋轉手機（如陀螺轉動），使風象星座自流光中顯影。',
+        ritualLine: '嵐紋已甦醒。手臂向前，手持法杖在頭頂或胸前快速左右橫掃，引導氣流匯聚。',
         releaseText: '風象印記正在成形，抹去薄霧即可取得你的氣流卡牌。',
+        motionHint: '🌪️ 快速左右橫掃法杖，引導氣流！',
+        motionClass: 'hint-wind',
         aliases: ['風', '嵐', '雙子', '天秤', '水瓶'],
         zodiacs: ['雙子座', '天秤座', '水瓶座']
       },
@@ -1020,17 +1097,40 @@
         icon: '🌍',
         color: 'rgba(132, 104, 64, 0.72)',
         gradient: ['#614385', '#516395'],
+        spellHint: '請吟誦「岩」或土象星座之名',
         ritualTitle: '岩脈低鳴，大地見證。',
-        ritualLine: '岩脈已與你對頻，向前用力做出劈砸敲擊動能，讓土象星座自地核光紋中升起。',
+        ritualLine: '岩脈已與你對頻。高舉法杖，由上往下猛力劈下，在腰部位置驟然急停。',
         releaseText: '土象封印正在崩解，抹去表層後即可鎖定你的地脈卡牌。',
+        motionHint: '⛰️ 由上往下猛劈法杖，在腰部急停！',
+        motionClass: 'hint-earth',
         aliases: ['土', '地', '岩', '金牛', '處女', '摩羯'],
         zodiacs: ['金牛座', '處女座', '摩羯座']
       }
     };
 
-    let state = {
+  /* ┌─────────────────────────────────────────────────────────────┐
+     │  ★ 區塊 5：動作辨識閾值（可調整）                          │
+     │  xThreshold：左右加速度閾值（越小越靈敏，建議 3.5～6）      │
+     │  yThreshold：上下加速度閾值（越小越靈敏，建議 5～10）       │
+     │  gyroThreshold：陀螺儀旋轉速度（風元素，建議 2.5～4）       │
+     │  slowSpeedMax：水元素慢速上限（越大越寬鬆，建議 2.5～4）    │
+     │  motionTimeout：動作超時重置（毫秒，建議 2000～3500）        │
+     └─────────────────────────────────────────────────────────────┘ */
+    const MOTION_CONFIG = {
+      xThreshold: 4.5,       // 左右加速度（風/水共用）
+      yThreshold: 7.0,       // 上下加速度（火/土）
+      gyroThreshold: 3.0,    // 陀螺儀旋轉（風）
+      slowSpeedMax: 3.5,     // 水元素最大速度（超過就不算水）
+      motionTimeout: 2500,   // 超時重置（毫秒）
+      stepsRequired: 4       // 需要幾步完成動作
+    };
+
+  /* ================================================================
+     應用程式狀態
+  ================================================================ */
+    const state = {
       authMode: 'login',
-      storageMode: 'none',
+      storageMode: 'local',
       dataStore: null,
       supabase: null,
       currentUser: null,
@@ -1041,23 +1141,30 @@
       isDrawing: false,
       isSaved: false,
       motionStep: 0,
+      lastMotionSign: 0,
+      lastMotionTime: 0,
       motionEnabled: false,
+      gyroEnabled: false,
       motionPermissionAsked: false,
       desktopTapCount: 0,
       desktopTapTimer: null,
       toastTimer: null,
       scratchPercent: 0,
       activeOverlay: null,
-      useImageMode: false
+      displayMode: 'emoji',   // 'emoji' | 'image'
+      zodiacImagesLoaded: false,
+      zodiacImageLoadPromise: null,
+      gyroAccum: 0,           // 陀螺儀累積旋轉量（風元素）
+      lastGyroTime: 0,
+      fireUpTriggered: false  // 火元素：上舉偵測旗標
     };
 
-    // ── DOM 宣告對齊 ──
-    const displayNameInput = document.getElementById('reg-name');
-    const emailInput = document.getElementById('auth-email');
-    const passwordInput = document.getElementById('auth-password');
-
+  /* ================================================================
+     DOM 參考
+  ================================================================ */
     const modeBadge = document.getElementById('mode-badge');
     const authOpenBtn = document.getElementById('auth-open-btn');
+    const userAvatarBtn = document.getElementById('user-avatar-btn');
     const userPanel = document.getElementById('user-panel');
     const logoutBtn = document.getElementById('logout-btn');
     const userNameEl = document.getElementById('user-name');
@@ -1072,6 +1179,7 @@
     const progressSteps = Array.from(document.querySelectorAll('.step-chip'));
     const motionMeterFill = document.getElementById('motion-meter-fill');
     const motionMeterText = document.getElementById('motion-meter-text');
+    const motionHintText = document.getElementById('motion-hint-text');
     const scratchProgressFill = document.getElementById('scratch-progress-fill');
     const scratchProgressText = document.getElementById('scratch-progress-text');
     const particleField = document.getElementById('particle-field');
@@ -1082,12 +1190,13 @@
     const resultCard = document.getElementById('result-card');
     const zodiacDesc = document.getElementById('zodiac-desc');
     const ritualLine = document.getElementById('ritual-line');
-    const zodiacIcon = document.getElementById('zodiac-icon');
+    const zodiacImg = document.getElementById('zodiac-img');
+    const zodiacSymbol = document.getElementById('zodiac-symbol');
     const zodiacName = document.getElementById('zodiac-name');
     const zodiacSubtitle = document.getElementById('zodiac-subtitle');
+    const revealFlash = document.getElementById('reveal-flash');
     const saveHint = document.getElementById('save-hint');
     const collectionBtn = document.getElementById('collection-btn');
-    const imageModeBtn = document.getElementById('image-mode-btn');
     const viewCollectionBtn = document.getElementById('view-collection-btn');
     const collectionModal = document.getElementById('collection-modal');
     const closeModalBtn = document.getElementById('close-modal');
@@ -1099,35 +1208,35 @@
     const elementButtons = Array.from(document.querySelectorAll('.element-btn'));
     const tabLogin = document.getElementById('tab-login');
     const tabRegister = document.getElementById('tab-register');
-    const regGroup = document.getElementById('reg-group');
+    const displayNameGroup = document.getElementById('display-name-group');
+    const displayNameInput = document.getElementById('display-name');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const authMessage = document.getElementById('auth-message');
     const submitAuthBtn = document.getElementById('submit-auth');
     const toast = document.getElementById('toast');
     const canvas = document.getElementById('scratch-canvas');
     const ctx = canvas.getContext('2d');
+    const displayToggleBtn = document.getElementById('display-toggle-btn');
+    const displayModeLabel = document.getElementById('display-mode-label');
+    const scratchContainer = document.getElementById('scratch-container');
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
 
-    // ── 修正重點：補齊缺少的字串切割工具函式 ──
-    function splitPart(str, separator, index) {
-      if(!str) return '';
-      let parts = str.split(separator);
-      return parts[index] || '';
-    }
-
-    function getZodiacImageUrl(zodiacName) {
-      let fileName = zodiacImages[zodiacName];
-      if(!fileName) return null;
-      let url = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${fileName}`;
-      console.log(`[图片URL] ${zodiacName}: ${url}`);
-      return url;
-    }
-
-    function showToast(message, type = 'success') {
+  /* ================================================================
+     通用 UI 工具
+  ================================================================ */
+    function showToast(message) {
       toast.textContent = message;
-      toast.className = `toast show ${type}`;
+      toast.classList.add('show');
       clearTimeout(state.toastTimer);
-      state.toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+      state.toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    function setAuthMessage(message, type = '') {
+      authMessage.textContent = message;
+      authMessage.className = `auth-message ${type}`.trim();
     }
 
     function lockBodyScroll(locked) {
@@ -1137,166 +1246,930 @@
     function setOverlayState(overlay, show) {
       if (!overlay) return;
       overlay.classList.toggle('show', show);
-      if (show) {
-        state.activeOverlay = overlay.id;
-      } else if (state.activeOverlay === overlay.id) {
-        state.activeOverlay = null;
-      }
+      if (show) { state.activeOverlay = overlay.id; }
+      else if (state.activeOverlay === overlay.id) { state.activeOverlay = null; }
       lockBodyScroll(Boolean(state.activeOverlay));
     }
 
     function setStep(stepKey) {
-      const order = ['login', 'main'];
+      const order = ['login', 'invoke', 'gesture', 'scratch'];
+      const index = order.indexOf(stepKey);
       progressSteps.forEach(step => {
-        let current = order.indexOf(step.dataset.step);
-        step.classList.toggle('active', step.dataset.step === stepKey);
+        const current = order.indexOf(step.dataset.step);
+        step.classList.toggle('active', current === index);
+        step.classList.toggle('done', current < index);
       });
     }
 
     function updateMotionMeter(step = 0) {
-      let value = Math.max(0, Math.min(4, step));
-      motionMeterFill.style.width = `${(value / 4) * 100}%`;
-      motionMeterText.textContent = `${value} / 4`;
+      const value = Math.max(0, Math.min(MOTION_CONFIG.stepsRequired, step));
+      motionMeterFill.style.width = `${(value / MOTION_CONFIG.stepsRequired) * 100}%`;
+      motionMeterText.textContent = `${value} / ${MOTION_CONFIG.stepsRequired}`;
     }
 
     function updateScratchProgress(percent = 0) {
-      let safePercent = Math.max(0, Math.min(100, percent));
+      const safePercent = Math.max(0, Math.min(100, percent));
       state.scratchPercent = safePercent;
       scratchProgressFill.style.width = `${safePercent}%`;
       scratchProgressText.textContent = `封印解除 ${safePercent}%`;
     }
 
+    /* 動作點亮指示燈 */
+    function updateMotionDots(step, elementKey) {
+      const colorClass = elementKey ? `lit-${elementKey}` : '';
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        dot.className = 'motion-dot';
+        if (i < step && colorClass) dot.classList.add(colorClass);
+      }
+    }
+
+  /* ================================================================
+     顯示模式切換（emoji ↔ 圖片）
+  ================================================================ */
+    function setDisplayMode(mode) {
+      state.displayMode = mode;
+      displayModeLabel.textContent = mode === 'image' ? '圖片模式' : 'emoji 模式';
+      if (mode === 'image' && state.storageMode === 'cloud') {
+        void hydrateZodiacImagesFromSupabase();
+      }
+      if (state.targetZodiac) updateScratchReveal(state.targetZodiac);
+      renderCollection();
+    }
+
+    displayToggleBtn.addEventListener('click', () => {
+      setDisplayMode(state.displayMode === 'emoji' ? 'image' : 'emoji');
+      showToast(state.displayMode === 'image' ? '已切換為圖片模式' : '已切換為 emoji 模式');
+    });
+
+    /* 刮刮樂揭示區域：依模式顯示 */
+    function updateScratchReveal(zodiacKey) {
+      const data = ZODIAC_DATA[zodiacKey];
+      if (!data) return;
+      const imgUrl = getZodiacImageUrl(zodiacKey);
+      const useImageMode = state.displayMode === 'image' && Boolean(imgUrl);
+
+      scratchContainer.classList.toggle('image-mode', useImageMode);
+
+      if (useImageMode) {
+        zodiacImg.onerror = () => {
+          scratchContainer.classList.remove('image-mode');
+          zodiacImg.style.display = 'none';
+          zodiacSymbol.textContent = data.symbol;
+          zodiacSymbol.style.display = 'block';
+        };
+        zodiacImg.src = imgUrl;
+        zodiacImg.alt = zodiacKey;
+        zodiacImg.style.display = 'block';
+        zodiacSymbol.style.display = 'none';
+      } else {
+        zodiacImg.onerror = null;
+        zodiacImg.removeAttribute('src');
+        zodiacSymbol.textContent = data.symbol;
+        zodiacSymbol.style.display = 'block';
+        zodiacImg.style.display = 'none';
+      }
+    }
+
+  /* ================================================================
+     粒子
+  ================================================================ */
     function spawnParticles() {
       if (!particleField) return;
       particleField.innerHTML = '';
-      let count = window.innerWidth < 720 ? 16 : 30;
+      const count = window.innerWidth < 720 ? 18 : 28;
       for (let i = 0; i < count; i++) {
-        let dot = document.createElement('span');
+        const dot = document.createElement('span');
         dot.className = 'particle';
         dot.style.left = `${Math.random() * 100}%`;
         dot.style.bottom = `${-10 - Math.random() * 60}px`;
-        let size = 2 + Math.random() * 5;
+        const size = 2 + Math.random() * 6;
         dot.style.width = `${size}px`;
         dot.style.height = `${size}px`;
-        dot.style.animationDuration = `${7 + Math.random() * 8}s`;
-        dot.style.animationDelay = `${Math.random() * 5}s`;
+        dot.style.animationDuration = `${8 + Math.random() * 8}s`;
+        dot.style.animationDelay = `${Math.random() * 6}s`;
         particleField.appendChild(dot);
       }
     }
 
-    function setAuthMode(mode) {
-      state.authMode = mode;
-      let isRegister = mode === 'register';
-      tabLogin.classList.toggle('active', !isRegister);
-      tabRegister.classList.toggle('active', isRegister);
-      regGroup.style.display = isRegister ? 'block' : 'none';
-      submitAuthBtn.textContent = isRegister ? '建立旅人檔案並進入儀式' : '登入並進入儀式';
+  /* ================================================================
+     刮刮樂揭示動畫
+  ================================================================ */
+    function triggerRevealAnimation() {
+      // 1. 閃光
+      revealFlash.classList.remove('active');
+      void revealFlash.offsetWidth; // reflow
+      revealFlash.classList.add('active');
+
+      // 2. 星粒子爆炸
+      const container = scratchContainer;
+      const cx = container.offsetWidth / 2;
+      const cy = container.offsetHeight / 2;
+      const stars = ['✦', '✧', '⋆', '★', '✨', '⭐'];
+      for (let i = 0; i < 14; i++) {
+        const s = document.createElement('span');
+        s.className = 'star-particle';
+        s.textContent = stars[Math.floor(Math.random() * stars.length)];
+        const angle = (i / 14) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+        const dist = 60 + Math.random() * 70;
+        s.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+        s.style.setProperty('--ty', `${Math.sin(angle) * dist}px`);
+        s.style.left = `${cx}px`;
+        s.style.top = `${cy}px`;
+        s.style.animationDelay = `${Math.random() * 0.2}s`;
+        container.appendChild(s);
+        setTimeout(() => s.remove(), 1200);
+      }
+
+      // 3. 震動
+      if (navigator.vibrate) navigator.vibrate([80, 40, 120]);
     }
 
-    function openAuthModal() { setOverlayState(authModal, true); }
-    function closeAuthModal() { if(state.currentUser) setOverlayState(authModal, false); }
-    function openCollectionModal() { renderCollection(); setOverlayState(collectionModal, true); }
-    function closeCollectionModal() { setOverlayState(collectionModal, false); }
-    function toggleImageMode() {
-      state.useImageMode = !state.useImageMode;
-      imageModeBtn.style.background = state.useImageMode ? 'rgba(157, 232, 255, 0.2)' : 'rgba(255,255,255,0.08)';
-      imageModeBtn.style.color = state.useImageMode ? '#9de8ff' : '#9de8ff';
-      imageModeBtn.textContent = state.useImageMode ? '📸 圖片模式 ✓' : '📸 圖片模式';
-      showToast(state.useImageMode ? '已切換至圖片模式' : '已切換至 Emoji 模式');
-      renderCollection();
-      
-      // 測試：列印所有圖片URL
-      console.log('=== 圖片 URL 測試 ===');
-      console.log('Supabase URL:', SUPABASE_URL);
-      console.log('Bucket 名稱:', SUPABASE_BUCKET);
-      allZodiacs.forEach(zodiac => {
-        let url = getZodiacImageUrl(zodiac);
-        console.log(`${zodiac}: ${url}`);
-      });
-      console.log('=====================');
-    }
-    function openElementModal() { gestureHint.textContent = '語音未開啟，請手動挑選印記序列。'; setOverlayState(elementModal, true); }
-    function closeElementModal() { setOverlayState(elementModal, false); }
+  /* ================================================================
+     刮刮樂繪圖
+  ================================================================ */
+    function initScratchCard(element) {
+      state.isSaved = false;
+      updateScratchProgress(0);
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    function updateModeUI(mode) {
-      modeBadge.className = `chip ${mode}`;
-      if (mode === 'cloud') {
-        modeBadge.textContent = 'Supabase 雲端同步';
-        storageLabelEl.textContent = '雲端';
-        syncStatusEl.textContent = '已連結 Supabase，個人卡牌收藏會即時保存在雲端星圖。';
-      } else {
-        modeBadge.textContent = '未連接資料庫';
-        storageLabelEl.textContent = '無';
-        syncStatusEl.textContent = '請先完成 GitHub Actions Secrets 密鑰設定。';
+      // 漸層背景
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, element.gradient[0]);
+      gradient.addColorStop(1, element.gradient[1]);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 星星紋路
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      for (let i = 0; i < 400; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 外圓
+      ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(canvas.width / 2, canvas.height / 2, 84, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // 元素圖示（大型中央提示）
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      ctx.font = '80px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(element.icon, canvas.width / 2, canvas.height / 2);
+
+      ctx.globalCompositeOperation = 'destination-out';
+    }
+
+    function scratch(e) {
+      if (!state.isDrawing) return;
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const x = (clientX - rect.left) * scaleX;
+      const y = (clientY - rect.top) * scaleY;
+
+      // 更滑順筆觸：更大直徑 + 模糊邊緣
+      const radius = 28;
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      gradient.addColorStop(0, 'rgba(0,0,0,1)');
+      gradient.addColorStop(0.6, 'rgba(0,0,0,0.85)');
+      gradient.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (canvas.lastX !== null && canvas.lastY !== null) {
+        const dx = x - canvas.lastX;
+        const dy = y - canvas.lastY;
+        const steps = Math.max(Math.ceil(Math.hypot(dx, dy) / 8), 1);
+        for (let i = 1; i <= steps; i++) {
+          const ix = canvas.lastX + dx * (i / steps);
+          const iy = canvas.lastY + dy * (i / steps);
+          const g2 = ctx.createRadialGradient(ix, iy, 0, ix, iy, radius * 0.8);
+          g2.addColorStop(0, 'rgba(0,0,0,1)');
+          g2.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = g2;
+          ctx.beginPath();
+          ctx.arc(ix, iy, radius * 0.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      canvas.lastX = x;
+      canvas.lastY = y;
+      checkScratchPercentage();
+    }
+
+    function startScratch(e) {
+      state.isDrawing = true;
+      canvas.lastX = null;
+      canvas.lastY = null;
+      scratch(e);
+    }
+
+    function stopScratch() { state.isDrawing = false; }
+
+    async function checkScratchPercentage() {
+      if (state.isSaved || !state.currentUser || !state.targetZodiac) return;
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const pixels = imgData.data;
+      let transparentPixels = 0;
+      for (let i = 3; i < pixels.length; i += 32) {
+        if (pixels[i] === 0) transparentPixels++;
+      }
+      const ratio = transparentPixels / (pixels.length / 32);
+      const percent = Math.round(ratio * 100);
+      updateScratchProgress(percent);
+
+      if (ratio > 0.35) {
+        state.isSaved = true;
+        triggerRevealAnimation();
+        await saveToCollection(state.targetZodiac, state.currentElement);
       }
     }
 
+    async function saveToCollection(name, elementKey) {
+      const card = { name, elementKey, unlockedAt: new Date().toISOString() };
+      try {
+        state.collection = await state.dataStore.saveCard(state.currentUser.id, card);
+        renderUserPanel();
+        renderCollection();
+        updateScratchProgress(100);
+        saveHint.textContent = `已收藏 ${name}，目前進度 ${state.collection.length} / 12。`;
+        gestureHint.textContent = '卡牌已寫入收藏，可以查看星軌冊或再次校準。';
+        showToast(`✨ ${name} 已寫入收藏`);
+      } catch (error) {
+        console.error(error);
+        saveHint.textContent = '收藏失敗，請稍後再試。';
+      }
+    }
+
+  /* ================================================================
+     收集冊渲染
+  ================================================================ */
+    function renderCollection() {
+      zodiacGrid.innerHTML = '';
+      const collectedNames = state.collection.map(item => item.name);
+      const isImageMode = state.displayMode === 'image';
+
+      if (isImageMode && state.storageMode === 'cloud') {
+        void hydrateZodiacImagesFromSupabase();
+      }
+
+      allZodiacs.forEach(zodiac => {
+        const data = ZODIAC_DATA[zodiac];
+        const isUnlocked = collectedNames.includes(zodiac);
+        const matched = isUnlocked ? state.collection.find(item => item.name === zodiac) : null;
+        const elementKey = matched?.elementKey || data.element;
+        const imgUrl = getZodiacImageUrl(zodiac);
+
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'zodiac-item';
+        if (isUnlocked) itemDiv.classList.add('unlocked', `el-${elementKey}`);
+        if (isImageMode && isUnlocked && imgUrl) itemDiv.classList.add('img-mode');
+
+        if (isUnlocked) {
+          const imgEl = document.createElement('img');
+          imgEl.className = 'card-img';
+          imgEl.alt = zodiac;
+          imgEl.loading = 'lazy';
+          imgEl.decoding = 'async';
+          if (imgUrl) {
+            imgEl.src = imgUrl;
+          }
+
+          const symEl = document.createElement('div');
+          symEl.className = 'zodiac-sym-big';
+          symEl.textContent = data.symbol;
+
+          if (isImageMode && imgUrl) {
+            imgEl.style.display = 'block';
+            symEl.style.display = 'none';
+            imgEl.onerror = () => {
+              itemDiv.classList.remove('img-mode');
+              imgEl.style.display = 'none';
+              symEl.style.display = 'flex';
+            };
+            itemDiv.appendChild(imgEl);
+            itemDiv.appendChild(symEl);
+          } else {
+            imgEl.style.display = 'none';
+            itemDiv.appendChild(imgEl);
+            itemDiv.appendChild(symEl);
+          }
+        } else {
+          const lockEl = document.createElement('div');
+          lockEl.className = 'lock-symbol';
+          lockEl.textContent = '？';
+          itemDiv.appendChild(lockEl);
+        }
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'item-name';
+        nameSpan.textContent = zodiac;
+        if (!isUnlocked) nameSpan.style.opacity = '0.3';
+        if (isImageMode) nameSpan.style.display = 'none';
+        itemDiv.appendChild(nameSpan);
+
+        zodiacGrid.appendChild(itemDiv);
+      });
+
+      if (!state.currentUser) {
+        collectionSummary.textContent = '尚未登入，目前無法建立個人收藏檔案。';
+      } else {
+        const modeText = state.storageMode === 'cloud' ? '雲端同步中' : '本機測試中';
+        collectionSummary.textContent = `${state.currentUser.displayName} 已解鎖 ${state.collection.length} / 12 張卡牌，${modeText}。`;
+      }
+    }
+
+  /* ================================================================
+     ★ 區塊 6：四大元素動作辨識邏輯
+     可修改：MOTION_CONFIG（見上方區塊 5）
+  ================================================================ */
+    function clearMotionState() {
+      state.motionStep = 0;
+      state.lastMotionSign = 0;
+      state.lastMotionTime = 0;
+      state.gyroAccum = 0;
+      state.lastGyroTime = 0;
+      state.fireUpTriggered = false;
+      updateMotionMeter(0);
+      updateMotionDots(0, '');
+    }
+
+    /* ── 風元素：陀螺儀 Z 軸旋轉 ── */
+    function handleGyro(event) {
+      if (!state.isSpellCharged || state.currentElement !== 'wind') return;
+      const alpha = event.gamma !== null ? event.gamma : 0; // gamma = 前後傾
+      const beta = event.alpha !== null ? event.alpha : 0;
+      const rotRate = event.rotationRate;
+      if (!rotRate) return;
+      const rz = rotRate.alpha || 0; // Z 軸旋轉速率 (deg/s)
+      const now = Date.now();
+
+      if (now - state.lastMotionTime > MOTION_CONFIG.motionTimeout) {
+        clearMotionState();
+      }
+
+      if (Math.abs(rz) > MOTION_CONFIG.gyroThreshold * 30) {
+        state.gyroAccum += Math.abs(rz) * ((now - (state.lastGyroTime || now)) / 1000);
+        state.lastGyroTime = now;
+        state.lastMotionTime = now;
+
+        const step = Math.min(Math.floor(state.gyroAccum / 90), MOTION_CONFIG.stepsRequired);
+        if (step !== state.motionStep) {
+          state.motionStep = step;
+          updateMotionMeter(step);
+          updateMotionDots(step, 'wind');
+          motionHintText.textContent = `旋轉中 ${step}/${MOTION_CONFIG.stepsRequired}`;
+          if (navigator.vibrate) navigator.vibrate(30);
+        }
+        if (state.gyroAccum >= 270 && state.motionStep >= MOTION_CONFIG.stepsRequired) {
+          releaseMagic();
+        }
+      }
+    }
+
+    /* ── 主動作處理（加速度計） ── */
+    function handleMotion(event) {
+      if (!state.isSpellCharged) return;
+      const el = state.currentElement;
+
+      let accX = event.acceleration?.x ?? event.accelerationIncludingGravity?.x ?? null;
+      let accY = event.acceleration?.y ?? event.accelerationIncludingGravity?.y ?? null;
+      if (accX === null && accY === null) return;
+
+      const now = Date.now();
+      if (now - state.lastMotionTime > MOTION_CONFIG.motionTimeout) {
+        clearMotionState();
+      }
+
+      // ── 火元素：Y 軸向上峰值 ──
+      if (el === 'fire') {
+        if (accY > MOTION_CONFIG.yThreshold) {
+          if (!state.fireUpTriggered) {
+            state.fireUpTriggered = true;
+            state.lastMotionTime = now;
+            state.motionStep = Math.min(state.motionStep + 1, MOTION_CONFIG.stepsRequired);
+            updateMotionMeter(state.motionStep);
+            updateMotionDots(state.motionStep, 'fire');
+            motionHintText.textContent = `火焰！${state.motionStep}/${MOTION_CONFIG.stepsRequired}`;
+            if (navigator.vibrate) navigator.vibrate(50);
+          }
+        } else if (accY < -2) {
+          state.fireUpTriggered = false; // 手放下後重置可再次觸發
+        }
+        if (state.motionStep >= MOTION_CONFIG.stepsRequired) releaseMagic();
+        return;
+      }
+
+      // ── 土元素：Y 軸向下衝擊 ──
+      if (el === 'earth') {
+        if (accY < -MOTION_CONFIG.yThreshold) {
+          state.lastMotionTime = now;
+          state.motionStep = Math.min(state.motionStep + 1, MOTION_CONFIG.stepsRequired);
+          updateMotionMeter(state.motionStep);
+          updateMotionDots(state.motionStep, 'earth');
+          motionHintText.textContent = `衝擊！${state.motionStep}/${MOTION_CONFIG.stepsRequired}`;
+          if (navigator.vibrate) navigator.vibrate([40, 20, 80]);
+          setTimeout(() => {
+            if (state.currentElement === 'earth' && state.motionStep >= MOTION_CONFIG.stepsRequired) releaseMagic();
+          }, 200);
+        }
+        return;
+      }
+
+      // ── 風元素（加速度計備援）：X 軸快速來回 ──
+      if (el === 'wind' && !state.gyroEnabled) {
+        if (Math.abs(accX) > MOTION_CONFIG.xThreshold) {
+          const currentSign = Math.sign(accX);
+          if (state.motionStep === 0) {
+            state.motionStep = 1;
+            state.lastMotionSign = currentSign;
+            state.lastMotionTime = now;
+          } else if (currentSign !== state.lastMotionSign && (now - state.lastMotionTime > 150)) {
+            state.motionStep++;
+            state.lastMotionSign = currentSign;
+            state.lastMotionTime = now;
+            updateMotionMeter(state.motionStep);
+            updateMotionDots(state.motionStep, 'wind');
+            motionHintText.textContent = `氣流！${state.motionStep}/${MOTION_CONFIG.stepsRequired}`;
+            if (navigator.vibrate) navigator.vibrate(25);
+            if (state.motionStep >= MOTION_CONFIG.stepsRequired) releaseMagic();
+          }
+        }
+        return;
+      }
+
+      // ── 水元素：X 軸慢速來回 ──
+      if (el === 'water') {
+        const speed = Math.abs(accX);
+        if (speed > 1.5 && speed < MOTION_CONFIG.slowSpeedMax) {
+          const currentSign = Math.sign(accX);
+          if (state.motionStep === 0) {
+            state.motionStep = 1;
+            state.lastMotionSign = currentSign;
+            state.lastMotionTime = now;
+          } else if (currentSign !== state.lastMotionSign && (now - state.lastMotionTime > 300)) {
+            state.motionStep++;
+            state.lastMotionSign = currentSign;
+            state.lastMotionTime = now;
+            updateMotionMeter(state.motionStep);
+            updateMotionDots(state.motionStep, 'water');
+            motionHintText.textContent = `波紋 ${state.motionStep}/${MOTION_CONFIG.stepsRequired}`;
+            if (navigator.vibrate) navigator.vibrate(20);
+            if (state.motionStep >= MOTION_CONFIG.stepsRequired) releaseMagic();
+          }
+        }
+        return;
+      }
+    }
+
+  /* ================================================================
+     初始化動作感測器
+  ================================================================ */
+    async function initMotionSensor() {
+      if (state.motionPermissionAsked) return;
+      state.motionPermissionAsked = true;
+
+      // 加速度計
+      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        try {
+          const perm = await DeviceMotionEvent.requestPermission();
+          if (perm === 'granted') {
+            window.addEventListener('devicemotion', handleMotion);
+            state.motionEnabled = true;
+          }
+        } catch(e) { console.warn(e); }
+      } else if ('DeviceMotionEvent' in window) {
+        window.addEventListener('devicemotion', handleMotion);
+        state.motionEnabled = true;
+      }
+
+      // 陀螺儀（風元素用）
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+          const perm = await DeviceOrientationEvent.requestPermission();
+          if (perm === 'granted') {
+            window.addEventListener('deviceorientation', handleGyro);
+            state.gyroEnabled = true;
+          }
+        } catch(e) { console.warn(e); }
+      } else if ('DeviceOrientationEvent' in window) {
+        window.addEventListener('deviceorientation', handleGyro);
+        state.gyroEnabled = true;
+      }
+    }
+
+  /* ================================================================
+     元素啟動
+  ================================================================ */
+    function activateElement(elementKey) {
+      state.isSpellCharged = true;
+      state.currentElement = elementKey;
+      clearMotionState();
+      const element = elementZodiacs[elementKey];
+
+      closeElementModal();
+      setStep('gesture');
+      lightLayer.style.background = element.color;
+      btn.style.opacity = '0';
+      btn.style.pointerEvents = 'none';
+      centerIcon.textContent = element.icon;
+      centerIcon.style.opacity = '1';
+      centerIcon.style.transform = 'scale(1)';
+
+      // 移除所有 hint class，加上對應元素的動畫
+      centerIcon.className = '';
+      centerIcon.id = 'center-icon';
+      centerIcon.classList.add(element.motionClass);
+
+      spellBadge.textContent = element.name;
+      statusText.innerHTML = `${element.ritualTitle}<br>${state.motionEnabled ? element.motionHint : '此裝置無動態感測時，可點擊中央符印兩次釋放。'}`;
+      gestureHint.textContent = state.motionEnabled
+        ? element.motionHint
+        : '此裝置將改用中央符印雙擊釋放，不影響整體體驗。';
+      ritualCopy.textContent = element.ritualLine;
+      motionHintText.textContent = '等待動作';
+
+      if (navigator.vibrate) navigator.vibrate(100);
+    }
+
+  /* ================================================================
+     釋放魔法 → 展示刮刮樂
+  ================================================================ */
+    function releaseMagic() {
+      window.removeEventListener('devicemotion', handleMotion);
+      window.removeEventListener('deviceorientation', handleGyro);
+      state.motionEnabled = false;
+      state.gyroEnabled = false;
+      updateMotionMeter(MOTION_CONFIG.stepsRequired);
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 300]);
+
+      const element = elementZodiacs[state.currentElement];
+      state.targetZodiac = element.zodiacs[Math.floor(Math.random() * element.zodiacs.length)];
+
+      // 閃光過渡動畫
+      lightLayer.style.background = 'rgba(255,255,255,1)';
+      uiContainer.style.opacity = '0';
+      uiContainer.style.pointerEvents = 'none';
+      centerIcon.className = '';
+      centerIcon.id = 'center-icon';
+
+      setTimeout(() => {
+        lightLayer.style.background = 'rgba(10, 10, 20, 0.95)';
+        zodiacDesc.textContent = element.ritualTitle;
+        zodiacName.textContent = state.targetZodiac;
+        zodiacSubtitle.textContent = `${element.name} · 即將顯影`;
+
+        // 設定揭示區域（emoji 或圖片）
+        updateScratchReveal(state.targetZodiac);
+
+        ritualLine.textContent = element.releaseText;
+        gestureHint.textContent = '刮開 35% 以上封印後，卡牌就會自動寫入收藏。';
+        saveHint.textContent = '';
+        updateScratchProgress(0);
+        initScratchCard(element);
+        resultCard.classList.add('show');
+        setStep('scratch');
+      }, 800);
+    }
+
+  /* ================================================================
+     重置
+  ================================================================ */
+    function resetMagic() {
+      resultCard.classList.remove('show');
+      uiContainer.style.opacity = '1';
+      uiContainer.style.pointerEvents = 'auto';
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+      btn.textContent = '啟動';
+      centerIcon.style.opacity = '0';
+      centerIcon.style.transform = 'scale(0.5)';
+      centerIcon.className = '';
+      centerIcon.id = 'center-icon';
+      spellBadge.textContent = '星軌待命中';
+      setStep(state.currentUser ? 'invoke' : 'login');
+      updateMotionMeter(0);
+      updateMotionDots(0, '');
+      updateScratchProgress(0);
+      statusText.innerHTML = state.currentUser
+        ? `旅人 ${state.currentUser.displayName}，請再次啟動儀式。<br>先呼喚元素，再畫出無限軌跡。`
+        : '請先登入，讓旅人的名字寫入星圖，再喚醒你的元素印記。';
+      gestureHint.textContent = state.currentUser
+        ? '重置完成，下一步重新呼喚元素即可。'
+        : '登入後，系統會替每位參展者建立專屬收藏進度。';
+      ritualCopy.textContent = state.currentUser
+        ? '新版咒語敘述：呼名、畫環、刮封印、收卡入冊。'
+        : '登入後才會建立個人資料與卡牌收藏。';
+      lightLayer.style.background = 'transparent';
+      state.currentElement = '';
+      state.targetZodiac = '';
+      state.isSaved = false;
+      state.isSpellCharged = false;
+      clearMotionState();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // 重新啟動感測器
+      state.motionPermissionAsked = false;
+      window.addEventListener('devicemotion', handleMotion);
+    }
+
+  /* ================================================================
+     語音辨識
+  ================================================================ */
+    function initSpeechRecognition() {
+      if (!SpeechRecognition) {
+        btn.disabled = false;
+        btn.textContent = '選擇元素';
+        statusText.innerHTML = '裝置不支援語音辨識。<br>點擊啟動後將直接進入元素選擇流程。';
+        gestureHint.textContent = '此裝置將自動使用底部元素選單，不需要麥克風。';
+        ritualCopy.textContent = '若現場設備無法使用麥克風，可改成點擊啟動後以彈窗方式選擇元素。';
+        return;
+      }
+      recognition = new SpeechRecognition();
+      recognition.lang = 'zh-TW';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = function () {
+        btn.classList.add('listening');
+        btn.textContent = '聆聽';
+        spellBadge.textContent = '元素咒語辨識中';
+        setStep('invoke');
+        statusText.innerHTML = '請說出元素咒語：焰、潮、嵐、岩。<br>也可直接說出對應星座名稱。';
+        gestureHint.textContent = '語音辨識中，請清楚說出元素或對應星座。';
+        centerIcon.style.opacity = '0';
+      };
+      recognition.onresult = function (event) {
+        btn.classList.remove('listening');
+        const transcript = event.results[0][0].transcript;
+        checkSpell(transcript);
+      };
+      recognition.onerror = function (event) {
+        btn.classList.remove('listening');
+        btn.textContent = '重試';
+        if (event.error === 'not-allowed') {
+          statusText.innerHTML = '⚠️ 麥克風權限被拒絕。<br>請改用元素選單繼續。';
+          gestureHint.textContent = '已切換為手動元素選單。';
+          setTimeout(openElementModal, 180);
+        } else if (event.error === 'no-speech') {
+          statusText.innerHTML = '🔇 沒有聽清楚。<br>請靠近麥克風再說一次，或改用元素選單。';
+        } else {
+          statusText.innerHTML = `❌ 辨識失敗：${event.error}`;
+          gestureHint.textContent = '你也可以改用元素選單，不會中斷體驗流程。';
+        }
+      };
+    }
+
+    function resolveElementByText(text) {
+      const normalized = text.replace(/\s+/g, '');
+      return Object.values(elementZodiacs).find(el =>
+        el.aliases.some(alias => normalized.includes(alias))
+      );
+    }
+
+    function checkSpell(text) {
+      const matchedElement = resolveElementByText(text);
+      if (!matchedElement) {
+        spellBadge.textContent = '咒語未對頻';
+        statusText.innerHTML = '星軌尚未對齊。<br>請重新說出焰、潮、嵐、岩其中一種元素。';
+        gestureHint.textContent = '若咒語難以辨識，可直接改用元素選單。';
+        btn.textContent = '重試';
+        return;
+      }
+      activateElement(matchedElement.key);
+    }
+
+  /* ================================================================
+     Auth 邏輯
+  ================================================================ */
+    function setAuthMode(mode) {
+      state.authMode = mode;
+      const isRegister = mode === 'register';
+      tabLogin.classList.toggle('active', !isRegister);
+      tabRegister.classList.toggle('active', isRegister);
+      displayNameGroup.style.display = isRegister ? 'block' : 'none';
+      submitAuthBtn.textContent = isRegister ? '建立旅人檔案並進入儀式' : '登入並進入儀式';
+      setAuthMessage(
+        isRegister
+          ? '建立帳號後，星座卡牌會綁定到這位旅人的收藏檔案。'
+          : '請登入既有旅人帳號，繼續蒐集你的星圖卡牌。'
+      );
+    }
+
+    function openAuthModal() { setOverlayState(authModal, true); }
+    function closeAuthModal() { if (!state.currentUser) return; setOverlayState(authModal, false); }
+    function openCollectionModal() { renderCollection(); setOverlayState(collectionModal, true); }
+    function closeCollectionModal() { setOverlayState(collectionModal, false); }
+    function openElementModal() { gestureHint.textContent = '已切換為手動模式，請直接點選元素。'; setOverlayState(elementModal, true); }
+    function closeElementModal() { setOverlayState(elementModal, false); }
+
+    function updateModeUI(mode) {
+      const isCloud = mode === 'cloud';
+      modeBadge.textContent = isCloud ? 'Supabase 雲端同步' : '本機收藏模式';
+      modeBadge.classList.toggle('cloud', isCloud);
+      modeBadge.classList.toggle('local', !isCloud);
+      storageLabelEl.textContent = isCloud ? '雲端' : '本機';
+      syncStatusEl.textContent = isCloud
+        ? '已啟用雲端資料庫，可跨裝置同步參展者帳號與收藏卡牌。'
+        : '目前為本機模式，適合原型測試；正式展場建議接上 Supabase。';
+    }
+
+    function renderUserPanel() {
+      const user = state.currentUser;
+      if (!user) {
+        userPanel.classList.remove('visible');
+        userNameEl.textContent = '未登入旅人';
+        userEmailEl.textContent = '登入後即可同步收藏卡牌與參展者資訊';
+        collectionCountEl.textContent = '0';
+        authOpenBtn.style.display = '';
+        userAvatarBtn.style.display = 'none';
+        return;
+      }
+      // 登入後：隱藏登入按鈕，顯示頭像按鈕（面板預設收合）
+      authOpenBtn.style.display = 'none';
+      userAvatarBtn.style.display = '';
+      userAvatarBtn.title = user.displayName;
+      userNameEl.textContent = user.displayName;
+      userEmailEl.textContent = user.email;
+      collectionCountEl.textContent = String(state.collection.length);
+    }
+
+    async function refreshCollection() {
+      if (!state.currentUser) { state.collection = []; renderUserPanel(); renderCollection(); return; }
+      try { state.collection = await state.dataStore.listCards(state.currentUser.id); }
+      catch (e) { console.error(e); showToast('讀取收藏失敗，請稍後再試'); }
+      renderUserPanel();
+      renderCollection();
+    }
+
+    function normalizeUser(user) {
+      if (!user) return null;
+      return { id: user.id, email: user.email, displayName: user.displayName || user.email?.split('@')[0] || '未命名旅人' };
+    }
+
+  /* ================================================================
+     本機 DataStore
+  ================================================================ */
+    const localStore = {
+      mode: 'local',
+      async init() { return true; },
+      getUsers() { return JSON.parse(localStorage.getItem('starrail_users') || '[]'); },
+      saveUsers(users) { localStorage.setItem('starrail_users', JSON.stringify(users)); },
+      getSession() { return JSON.parse(localStorage.getItem('starrail_session') || 'null'); },
+      saveSession(session) { localStorage.setItem('starrail_session', JSON.stringify(session)); },
+      clearSession() { localStorage.removeItem('starrail_session'); },
+      getCollections() { return JSON.parse(localStorage.getItem('starrail_collections') || '{}'); },
+      saveCollections(data) { localStorage.setItem('starrail_collections', JSON.stringify(data)); },
+      async register({ displayName, email, password }) {
+        const users = this.getUsers();
+        const normalizedEmail = email.toLowerCase();
+        if (users.some(u => u.email === normalizedEmail)) throw new Error('這個 Email 已經註冊過了。');
+        const user = { id: `local-${Date.now()}`, displayName, email: normalizedEmail, password, createdAt: new Date().toISOString() };
+        users.push(user);
+        this.saveUsers(users);
+        const session = { id: user.id, email: user.email, displayName: user.displayName };
+        this.saveSession(session);
+        return session;
+      },
+      async login({ email, password }) {
+        const users = this.getUsers();
+        const user = users.find(u => u.email === email.toLowerCase() && u.password === password);
+        if (!user) throw new Error('帳號或密碼不正確。');
+        const session = { id: user.id, email: user.email, displayName: user.displayName };
+        this.saveSession(session);
+        return session;
+      },
+      async logout() { this.clearSession(); },
+      async getCurrentUser() { return this.getSession(); },
+      async listCards(userId) {
+        const collections = this.getCollections();
+        return collections[userId] || [];
+      },
+      async saveCard(userId, card) {
+        const collections = this.getCollections();
+        const userCards = collections[userId] || [];
+        if (!userCards.some(c => c.name === card.name)) {
+          userCards.push(card);
+          collections[userId] = userCards;
+          this.saveCollections(collections);
+        }
+        return userCards;
+      }
+    };
+
+  /* ================================================================
+     Supabase DataStore
+  ================================================================ */
     function createSupabaseStore(client) {
       return {
-        async login({ email, password }) {
-          const { data, error } = await client.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-          const user = data.user;
-          
-          let displayName = splitPart(user.email, '@', 1);
-          try {
-            const { data: pData } = await client.from('profiles').select('display_name').eq('user_id', user.id).maybeSingle();
-            if (pData && pData.display_name) {
-              displayName = pData.display_name;
-            }
-          } catch(e) { console.warn("檔案讀取受限，使用預設名稱", e); }
-
-          return { id: user.id, email: user.email, displayName };
-        },
-
+        mode: 'cloud', client,
+        async init() { return true; },
         async register({ displayName, email, password }) {
-          const { data, error } = await client.auth.signUp({ 
-            email, 
-            password, 
-            options: { data: { display_name: displayName } } 
+          const { data, error } = await client.auth.signUp({
+            email,
+            password,
+            options: { data: { display_name: displayName } }
           });
           if (error) throw error;
           const user = data.user;
           if (!user) throw new Error('註冊成功，但尚未取得使用者資訊。');
-          
-          return { 
-            id: user.id, 
-            email: user.email, 
-            displayName: user.user_metadata?.display_name || displayName 
-          };
-        },
 
-        async logout() {
-          await client.auth.signOut();
-        },
+          const { error: profileError } = await client
+            .from('profiles')
+            .upsert({
+              user_id: user.id,
+              display_name: displayName,
+              email: email.toLowerCase(),
+              updated_at: new Date().toISOString()
+            });
+          if (profileError) console.warn('profiles upsert 失敗，可稍後補寫。', profileError);
 
-        async getCards(userId) {
-          const { data, error } = await client.from('user_cards').select('zodiac_name, element_key');
+          return { id: user.id, email: user.email, displayName: user.user_metadata?.display_name || displayName };
+        },
+        async login({ email, password }) {
+          const { data, error } = await client.auth.signInWithPassword({ email, password });
           if (error) throw error;
-          return data.map(c => ({ name: c.zodiac_name, element: c.element_key }));
+          const user = data.user;
+          let displayName = user.user_metadata?.display_name || user.email?.split('@')[0] || '未命名旅人';
+          try {
+            const { data: profile } = await client
+              .from('profiles')
+              .select('display_name')
+              .eq('user_id', user.id)
+              .maybeSingle();
+            if (profile?.display_name) displayName = profile.display_name;
+          } catch (error) {
+            console.warn('讀取 profiles 失敗，改用 auth metadata。', error);
+          }
+          return { id: user.id, email: user.email, displayName };
         },
-
+        async logout() { const { error } = await client.auth.signOut(); if (error) throw error; },
+        async getCurrentUser() {
+          const { data, error } = await client.auth.getSession();
+          if (error) throw error;
+          const user = data?.session?.user;
+          if (!user) return null;
+          let displayName = user.user_metadata?.display_name || user.email?.split('@')[0] || '未命名旅人';
+          try {
+            const { data: profile } = await client
+              .from('profiles')
+              .select('display_name')
+              .eq('user_id', user.id)
+              .maybeSingle();
+            if (profile?.display_name) displayName = profile.display_name;
+          } catch (error) {
+            console.warn('還原 session 時讀取 profiles 失敗。', error);
+          }
+          return { id: user.id, email: user.email, displayName };
+        },
+        async listCards(userId) {
+          const { data, error } = await client
+            .from('user_cards')
+            .select('zodiac_name, element_key, unlocked_at')
+            .eq('user_id', userId)
+            .order('unlocked_at', { ascending: true });
+          if (error) throw error;
+          return (data || []).map(item => ({
+            name: item.zodiac_name,
+            elementKey: item.element_key,
+            unlockedAt: item.unlocked_at
+          }));
+        },
         async saveCard(userId, card) {
-          // ── 修正重點：對齊 SQL schema 中的底線欄位名稱 element_key ──
           const { error } = await client.from('user_cards').upsert({
             user_id: userId,
             zodiac_name: card.name,
-            element_key: card.element
+            element_key: card.elementKey,
+            unlocked_at: card.unlockedAt
           }, { onConflict: 'user_id,zodiac_name' });
           if (error) throw error;
-          return true;
+          return this.listCards(userId);
         }
       };
     }
 
     async function initStore() {
-      const hasConfig = window.APP_CONFIG.supabaseUrl && window.APP_CONFIG.supabaseAnonKey
+      const hasConfig = window.APP_CONFIG.supabaseUrl
+        && window.APP_CONFIG.supabaseAnonKey
         && !window.APP_CONFIG.supabaseUrl.includes('{{')
+        && !window.APP_CONFIG.supabaseAnonKey.includes('{{')
         && window.supabase;
       if (hasConfig) {
         try {
           state.supabase = window.supabase.createClient(
-            window.APP_CONFIG.supabaseUrl, 
+            window.APP_CONFIG.supabaseUrl,
             window.APP_CONFIG.supabaseAnonKey,
             {
               auth: {
@@ -1309,454 +2182,156 @@
           state.dataStore = createSupabaseStore(state.supabase);
           state.storageMode = 'cloud';
           updateModeUI('cloud');
+          void hydrateZodiacImagesFromSupabase();
           return;
-        } catch(e) { console.warn('Supabase 連接失敗', e); }
+        } catch(e) { console.warn('Supabase 初始化失敗，改回本機模式', e); }
       }
       state.supabase = null;
-      state.dataStore = null;
-      state.storageMode = 'none';
-      updateModeUI('none');
-    }
-
-    function renderUserPanel() {
-      if (!state.currentUser) {
-        userPanel.classList.add('hidden');
-        return;
-      }
-      userPanel.classList.remove('hidden');
-      userNameEl.textContent = state.currentUser.displayName;
-      userEmailEl.textContent = state.currentUser.email;
-      collectionCountEl.textContent = String(state.collection.length);
-    }
-
-    function renderCollection() {
-      zodiacGrid.innerHTML = '';
-      let unlockedNames = state.collection.map(c => c.name);
-      allZodiacs.forEach(z => {
-        let node = document.createElement('div');
-        node.className = 'zodiac-item';
-        let icon = document.createElement('span');
-        icon.style.fontSize = '1.5rem';
-        let txt = document.createElement('span');
-        txt.className = 'item-name';
-        txt.textContent = z;
-
-        if (unlockedNames.includes(z)) {
-          node.classList.add('unlocked');
-          let found = state.collection.find(c => c.name === z);
-          if (state.useImageMode) {
-            // 圖片模式
-            let imgUrl = getZodiacImageUrl(z);
-            if (imgUrl) {
-              icon.innerHTML = `<img src="${imgUrl}" alt="${z}" style="width:100%;height:100%;object-fit:contain;border-radius:6px;">`;
-              icon.style.width = '60px';
-              icon.style.height = '60px';
-              icon.style.display = 'inline-block';
-              icon.style.fontSize = 'unset';
-            } else {
-              icon.textContent = (found && elementZodiacs[found.element]) ? elementZodiacs[found.element].icon : '✨';
-              icon.style.width = 'auto';
-              icon.style.height = 'auto';
-              icon.style.fontSize = '1.5rem';
-            }
-          } else {
-            // emoji 模式
-            icon.innerHTML = '';  // 清除之前的 img 標籤
-            icon.textContent = (found && elementZodiacs[found.element]) ? elementZodiacs[found.element].icon : '✨';
-            icon.style.width = 'auto';
-            icon.style.height = 'auto';
-            icon.style.fontSize = '1.5rem';
-            icon.style.display = 'inline';
-          }
-        } else {
-          icon.textContent = '？';
-          icon.style.width = 'auto';
-          icon.style.height = 'auto';
-          icon.style.fontSize = '1.5rem';
-        }
-        node.appendChild(icon);
-        node.appendChild(txt);
-        zodiacGrid.appendChild(node);
-      });
-
-      if (!state.currentUser) {
-        collectionSummary.textContent = '未登入旅人，卡牌將不會同步上雲端。';
-      } else {
-        collectionSummary.textContent = `${state.currentUser.displayName} 已校準 ${state.collection.length} / 12 星座卡牌。`;
-      }
-    }
-
-    async function syncCollectionFromCloud() {
-      if (!state.dataStore || !state.currentUser) return;
-      try {
-        state.collection = await state.dataStore.getCards(state.currentUser.id);
-        renderUserPanel();
-        renderCollection();
-      } catch(e) { console.error('同步雲端失敗', e); }
-    }
-
-    async function hydrateSession() {
-      if (!state.supabase || !state.dataStore) return; 
-      try {
-        const { data: { session }, error } = await state.supabase.auth.getSession();
-        if (error) throw error;
-        
-        if (session && session.user) {
-          let user = session.user;
-          let displayName = splitPart(user.email, '@', 1);
-          try {
-            const { data: pData } = await state.supabase.from('profiles').select('display_name').eq('user_id', user.id).maybeSingle();
-            if (pData && pData.display_name) displayName = pData.display_name;
-          } catch(e) {}
-
-          state.currentUser = { id: user.id, email: user.email, displayName };
-          showToast(`歡迎回來，${displayName}！`);
-          setStep('main');
-          await syncCollectionFromCloud();
-          closeAuthModal();
-        }
-      } catch (e) { console.error('還原對話失敗:', e); }
-    }
-
-    function setLoading(show) {
-      submitAuthBtn.disabled = show;
-      submitAuthBtn.textContent = show ? '法杖對頻中…' : (state.authMode === 'register' ? '建立旅人檔案並進入儀式' : '登入並進入儀式');
+      state.dataStore = localStore;
+      state.storageMode = 'local';
+      updateModeUI('local');
     }
 
     async function submitAuth() {
-      if (!state.dataStore) {
-        showToast('目前處於離線/未設定模式，無法使用雲端同步功能', 'danger');
-        return;
-      }
-      let isLogin = state.authMode === 'login';
-      let email = emailInput ? emailInput.value.trim() : '';
-      let password = passwordInput ? passwordInput.value : '';
-      let displayName = displayNameInput ? displayNameInput.value.trim() : '';
-
-      if (!email || !password || (!isLogin && !displayName)) {
-        showToast('請填寫所有必填欄位', 'danger');
-        return;
-      }
-
-      setLoading(true);
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      const displayName = displayNameInput.value.trim();
+      if (!email || !password) { setAuthMessage('請完整填寫 Email 與密碼。', 'error'); return; }
+      if (state.authMode === 'register' && !displayName) { setAuthMessage('註冊時需要填寫顯示名稱。', 'error'); return; }
+      if (password.length < 6) { setAuthMessage('密碼至少需要 6 碼。', 'error'); return; }
+      submitAuthBtn.disabled = true;
+      setAuthMessage('正在建立連結，請稍候…');
       try {
-        if (isLogin) {
-          let user = await state.dataStore.login({ email, password });
-          state.currentUser = user;
-          showToast(`登入成功！歡迎 ${user.displayName}`);
-        } else {
-          let user = await state.dataStore.register({ displayName, email, password });
-          state.currentUser = user;
-          showToast('註冊成功！已為您自動登入');
-        }
+        const user = state.authMode === 'register'
+          ? await state.dataStore.register({ displayName, email, password })
+          : await state.dataStore.login({ email, password });
+        state.currentUser = normalizeUser(user);
+        await refreshCollection();
         closeAuthModal();
-        setStep('main');
-        await syncCollectionFromCloud();
-      } catch (error) {
-        console.error('認證出錯:', error);
-        showToast(error.message || '認證失敗，密碼可能短於6碼或帳號有誤', 'danger');
+        setAuthMessage('登入成功。', 'success');
+        setStep('invoke');
+        statusText.innerHTML = `旅人 ${state.currentUser.displayName} 已寫入星圖。<br>請輕觸啟動，呼喚你的元素。`;
+        gestureHint.textContent = '已登入，開始呼喚元素。若語音辨識不穩，可直接開啟元素選單。';
+        ritualCopy.textContent = '請先說出元素咒語：焰／潮／嵐／岩，接著完成對應的元素動作。';
+        showToast(state.authMode === 'register' ? '旅人檔案已建立' : '登入成功');
+      } catch(e) {
+        console.error(e);
+        setAuthMessage(e.message || '登入失敗，請稍後再試。', 'error');
       } finally {
-        setLoading(false);
+        submitAuthBtn.disabled = false;
       }
     }
 
     async function handleLogout() {
-      if (state.dataStore) {
-        try { await state.dataStore.logout(); } catch(e){}
-      }
+      try { await state.dataStore.logout(); } catch(e) { console.error(e); }
       state.currentUser = null;
       state.collection = [];
       renderUserPanel();
       renderCollection();
       setStep('login');
       openAuthModal();
-      showToast('已登出旅人檔案');
+      statusText.innerHTML = '請先登入，讓旅人的名字寫入星圖，再喚醒你的元素印記。';
+      gestureHint.textContent = '登入後會為每位參展者建立自己的收藏進度。';
+      ritualCopy.textContent = '登入後才會建立個人資料與卡牌收藏。';
+      updateMotionMeter(0);
+      updateMotionDots(0, '');
+      updateScratchProgress(0);
+      showToast('已登出');
     }
 
-    function initSpeechRecognition() {
-      if (!SpeechRecognition) {
-        btn.textContent = '選擇元素';
-        statusText.innerHTML = '此裝置不支援語音。<br>點擊後直接開啟元素選單。';
-        return;
-      }
-      recognition = new SpeechRecognition();
-      recognition.lang = 'zh-TW';
-      recognition.continuous = false;
-      recognition.interimResults = false;
-
-      recognition.onstart = function() {
-        btn.classList.add('listening');
-        btn.textContent = '聆聽中';
-        spellBadge.textContent = '語音印記感應中';
-        centerIcon.style.opacity = '0';
-        centerIcon.classList.remove('figure8-hint');
-      };
-      recognition.onresult = function(e) {
-        btn.classList.remove('listening');
-        let text = e.results[0][0].transcript;
-        let found = Object.values(elementZodiacs).find(el => el.aliases.some(a => text.includes(a)));
-        if(found) {
-          activateElement(found.key);
-        } else {
-          spellBadge.textContent = '未感知到元素';
-          statusText.innerHTML = '星軌未共鳴。<br>請再說一次：焰、潮、嵐、岩。';
-          btn.textContent = '重試';
-        }
-      };
-      recognition.onerror = function() {
-        btn.classList.remove('listening');
-        btn.textContent = '啟動';
-        openElementModal();
-      };
-    }
-
-    async function initMotionSensor() {
-      if (state.motionPermissionAsked) return;
-      state.motionPermissionAsked = true;
-      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-        try {
-          let p = await DeviceMotionEvent.requestPermission();
-          if (p === 'granted') { state.motionEnabled = true; }
-        } catch(e) { console.warn(e); }
+    async function hydrateSession() {
+      await initStore();
+      const user = normalizeUser(await state.dataStore.getCurrentUser());
+      state.currentUser = user;
+      renderUserPanel();
+      renderCollection();
+      if (user) {
+        closeAuthModal();
+        setStep('invoke');
+        statusText.innerHTML = `歡迎回來，${user.displayName}。<br>輕觸啟動，喚醒你的元素印記。`;
+        gestureHint.textContent = '登入完成，下一步請呼喚元素；若語音失敗，可改用元素選單。';
+        ritualCopy.textContent = '請先說出元素咒語：焰／潮／嵐／岩，接著完成對應的元素動作。';
+        await refreshCollection();
       } else {
-        state.motionEnabled = ('DeviceMotionEvent' in window);
+        setStep('login');
+        openAuthModal();
       }
     }
 
-    function activateElement(elementKey) {
-      state.isSpellCharged = true;
-      state.currentElement = elementKey;
-      state.motionStep = 0;
-      let el = elementZodiacs[elementKey];
-
-      closeElementModal();
-      updateMotionMeter(0);
-      lightLayer.style.background = el.color;
-      btn.style.opacity = '0';
-      btn.style.pointerEvents = 'none';
-      centerIcon.textContent = el.icon;
-      centerIcon.style.opacity = '1';
-      centerIcon.style.transform = 'scale(1)';
-      centerIcon.style.fontSize = '2rem';
-      centerIcon.style.width = 'auto';
-      centerIcon.style.height = 'auto';
-      centerIcon.classList.add('figure8-hint');
-      spellBadge.textContent = el.name;
-      statusText.innerHTML = `${el.ritualTitle}<br>請依照下方引導舞動法杖。`;
-      gestureHint.textContent = '動態感應中，或雙擊中央符印直接釋放星軌。';
-      ritualCopy.textContent = el.ritualLine;
-      
-      if(state.motionEnabled) {
-        window.addEventListener('devicemotion', handleDeviceMotion);
-      }
-    }
-
-    function handleDeviceMotion(e) {
-      if(!state.isSpellCharged) return;
-      let ax = e.acceleration ? e.acceleration.x : null;
-      let ay = e.acceleration ? e.acceleration.y : null;
-      let az = e.acceleration ? e.acceleration.z : null;
-      if(!ax && e.accelerationIncludingGravity) {
-        ax = e.accelerationIncludingGravity.x;
-        ay = e.accelerationIncludingGravity.y;
-        az = e.accelerationIncludingGravity.z;
-      }
-      if(!ax) return;
-
-      let key = state.currentElement;
-      if(key === 'fire' && ay > 5) { advanceMotion(); }
-      else if(key === 'water' && Math.abs(az) > 5) { advanceMotion(); }
-      else if(key === 'wind' && Math.abs(ax) > 5) { advanceMotion(); }
-      else if(key === 'earth' && az > 6) { advanceMotion(); }
-    }
-
-    function advanceMotion() {
-      state.motionStep++;
-      updateMotionMeter(state.motionStep);
-      if(state.motionStep >= 4) {
-        window.removeEventListener('devicemotion', handleDeviceMotion);
-        releaseMagic();
-      }
-    }
-
-    function releaseMagic() {
-      updateMotionMeter(4);
-      lightLayer.style.background = 'rgba(255,255,255,1)';
-      uiContainer.style.opacity = '0';
-      uiContainer.style.pointerEvents = 'none';
-      centerIcon.classList.remove('figure8-hint');
-
-      let el = elementZodiacs[state.currentElement];
-      state.targetZodiac = el.zodiacs[Math.floor(Math.random() * el.zodiacs.length)];
-
-      setTimeout(() => {
-        lightLayer.style.background = 'rgba(20,20,20,0.94)';
-        zodiacName.textContent = state.targetZodiac;
-        
-        // 根據模式顯示圖片或 emoji
-        if (state.useImageMode) {
-          let imgUrl = getZodiacImageUrl(state.targetZodiac);
-          if (imgUrl) {
-            zodiacIcon.innerHTML = `<img src="${imgUrl}" alt="${state.targetZodiac}" style="width:100%;height:100%;object-fit:contain;border-radius:12px;" onerror="this.parentElement.textContent='✨';">`;
-            zodiacIcon.style.fontSize = 'unset';
-          } else {
-            zodiacIcon.innerHTML = '';
-            zodiacIcon.textContent = '✨';
-            zodiacIcon.style.fontSize = '1.5rem';
-          }
-        } else {
-          // emoji 模式：顯示星座對應的元素 emoji
-          zodiacIcon.innerHTML = '';
-          zodiacIcon.textContent = el.icon;
-          zodiacIcon.style.fontSize = '1.5rem';
-        }
-        
-        zodiacSubtitle.textContent = `${el.name} · 星圖浮現`;
-        zodiacDesc.textContent = el.ritualTitle;
-        ritualLine.textContent = el.releaseText;
-        initScratchCard(el);
-        resultCard.classList.add('show');
-      }, 700);
-    }
-
-    function initScratchCard(el) {
-      state.isSaved = false;
-      updateScratchProgress(0);
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.clearRect(0,0, canvas.width, canvas.height);
-      
-      let g = ctx.createLinearGradient(0,0, canvas.width, canvas.height);
-      g.addColorStop(0, el.gradient[0]);
-      g.addColorStop(1, el.gradient[1]);
-      ctx.fillStyle = g;
-      ctx.fillRect(0,0, canvas.width, canvas.height);
-
-      ctx.fillStyle = 'rgba(255,255,255,0.12)';
-      for(let i=0; i<300; i++) {
-        ctx.beginPath();
-        ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height, 1+Math.random()*2, 0, Math.PI*2);
-        ctx.fill();
-      }
-      ctx.globalCompositeOperation = 'destination-out';
-    }
-
-    function scratch(e) {
-      if(!state.isDrawing) return;
-      let r = canvas.getBoundingClientRect();
-      let cx = e.touches ? e.touches[0].clientX : e.clientX;
-      let cy = e.touches ? e.touches[0].clientY : e.clientY;
-      let x = cx - r.left;
-      let y = cy - r.top;
-
-      ctx.lineWidth = 32;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.beginPath();
-      if(canvas.lastX && canvas.lastY) { ctx.moveTo(canvas.lastX, canvas.lastY); }
-      else { ctx.moveTo(x, y); }
-      ctx.lineTo(x, y);
-      ctx.stroke();
-      canvas.lastX = x; canvas.lastY = y;
-      
-      checkPercent();
-    }
-
-    function checkPercent() {
-      if(state.isSaved || !state.currentUser) return;
-      let pixels = ctx.getImageData(0,0, canvas.width, canvas.height).data;
-      let transparent = 0;
-      for(let i=3; i<pixels.length; i+=32) { if(pixels[i] === 0) transparent++; }
-      let ratio = transparent / (pixels.length/32);
-      updateScratchProgress(Math.round(ratio*100));
-
-      if(ratio > 0.35) {
-        state.isSaved = true;
-        saveToCloud();
-      }
-    }
-
-    async function saveToCloud() {
-      if(!state.dataStore || !state.currentUser) return;
-      // ── 修正對齊點：包裝成符合 store 物件格式的鍵值 ──
-      let newCard = { name: state.targetZodiac, element: state.currentElement };
-      try {
-        await state.dataStore.saveCard(state.currentUser.id, newCard);
-        await syncCollectionFromCloud();
-        updateScratchProgress(100);
-        saveHint.textContent = `✨ 成功！${state.targetZodiac}經文已寫入你的星圖冊。`;
-        showToast(`解鎖 ${state.targetZodiac}！`);
-      } catch(e) { saveHint.textContent = '雲端寫入受限。'; }
-    }
-
-    window.resetMagic = function() {
-      resultCard.classList.remove('show');
-      uiContainer.style.opacity = '1';
-      uiContainer.style.pointerEvents = 'auto';
-      btn.style.opacity = '1';
-      btn.style.pointerEvents = 'auto';
-      btn.textContent = '啟動';
-      centerIcon.textContent = '✨';
-      centerIcon.innerHTML = '✨';  // 清除圖片，恢復文字
-      centerIcon.style.opacity = '0';
-      centerIcon.style.fontSize = '2rem';
-      centerIcon.style.width = 'auto';
-      centerIcon.style.height = 'auto';
-      centerIcon.classList.remove('figure8-hint');
-      spellBadge.textContent = '星軌待命中';
-      lightLayer.style.background = 'transparent';
-      updateMotionMeter(0);
-      updateScratchProgress(0);
-      state.isSpellCharged = false;
-      state.currentElement = '';
-      state.targetZodiac = '';
-      if(state.currentUser) {
-        statusText.innerHTML = `旅人 ${state.currentUser.displayName}，請再次詠唱。<br>呼喚元素，喚醒下一個星座。`;
-      }
-    }
-
+  /* ================================================================
+     事件綁定
+  ================================================================ */
     btn.addEventListener('click', async () => {
-      if(!state.currentUser) { openAuthModal(); return; }
+      if (!state.currentUser) { openAuthModal(); setAuthMessage('請先登入或註冊，再開始收集卡牌。', 'error'); return; }
       await initMotionSensor();
-      if(recognition) { try { recognition.start(); } catch(e){} }
-      else { openElementModal(); }
+      if (recognition) {
+        try { recognition.start(); } catch(e) { console.warn(e); }
+      } else {
+        openElementModal();
+      }
     });
 
     centerIcon.addEventListener('click', () => {
-      if(!state.isSpellCharged) return;
-      state.desktopTapCount++;
+      if (!state.isSpellCharged || state.motionEnabled) return;
+      state.desktopTapCount += 1;
       clearTimeout(state.desktopTapTimer);
-      state.desktopTapTimer = setTimeout(() => { state.desktopTapCount = 0; }, 600);
-      if(state.desktopTapCount >= 2) { releaseMagic(); }
+      state.desktopTapTimer = setTimeout(() => { state.desktopTapCount = 0; }, 700);
+      if (state.desktopTapCount >= 2) { state.desktopTapCount = 0; releaseMagic(); }
     });
 
-    canvas.addEventListener('mousedown', (e) => { state.isDrawing = true; canvas.lastX = null; canvas.lastY = null; scratch(e); });
-    canvas.addEventListener('mousemove', scratch);
-    window.addEventListener('mouseup', () => state.isDrawing = false);
-    canvas.addEventListener('touchstart', (e) => { state.isDrawing = true; canvas.lastX = null; canvas.lastY = null; scratch(e); }, {passive:false});
-    canvas.addEventListener('touchmove', scratch, {passive:false});
-    window.addEventListener('touchend', () => state.isDrawing = false);
-
     collectionBtn.addEventListener('click', openCollectionModal);
-    imageModeBtn.addEventListener('click', toggleImageMode);
     viewCollectionBtn.addEventListener('click', openCollectionModal);
     closeModalBtn.addEventListener('click', closeCollectionModal);
     closeElementModalBtn.addEventListener('click', closeElementModal);
     authOpenBtn.addEventListener('click', openAuthModal);
+    // 頭像按鈕：切換個人資料面板
+    userAvatarBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userPanel.classList.toggle('visible');
+    });
+    // 點擊其他地方收合面板
+    document.addEventListener('click', (e) => {
+      if (!userPanel.contains(e.target) && e.target !== userAvatarBtn) {
+        userPanel.classList.remove('visible');
+      }
+    });
     logoutBtn.addEventListener('click', handleLogout);
     tabLogin.addEventListener('click', () => setAuthMode('login'));
     tabRegister.addEventListener('click', () => setAuthMode('register'));
     submitAuthBtn.addEventListener('click', submitAuth);
-    elementButtons.forEach(b => b.addEventListener('click', () => activateElement(b.dataset.element)));
+    elementButtons.forEach(button => {
+      button.addEventListener('click', () => activateElement(button.dataset.element));
+    });
 
+    canvas.addEventListener('mousedown', startScratch);
+    canvas.addEventListener('mousemove', scratch);
+    window.addEventListener('mouseup', stopScratch);
+    canvas.addEventListener('touchstart', startScratch, { passive: false });
+    canvas.addEventListener('touchmove', scratch, { passive: false });
+    window.addEventListener('touchend', stopScratch);
+
+    authModal.addEventListener('click', e => { if (e.target === authModal && state.currentUser) closeAuthModal(); });
+    collectionModal.addEventListener('click', e => { if (e.target === collectionModal) closeCollectionModal(); });
+    elementModal.addEventListener('click', e => { if (e.target === elementModal) closeElementModal(); });
+    [displayNameInput, emailInput, passwordInput].forEach(input => {
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') submitAuth(); });
+    });
     window.addEventListener('resize', spawnParticles);
 
-    // ── 初始化啟動 ──
-    (async function() {
-      spawnParticles();
-      await initStore();
-      await hydrateSession();
-      initSpeechRecognition();
-    })();
+  /* ================================================================
+     初始化
+  ================================================================ */
+    updateMotionMeter(0);
+    updateScratchProgress(0);
+    setStep('login');
+    spawnParticles();
+    hydrateSession();
+    initSpeechRecognition();
+    setAuthMode('login');
+    window.resetMagic = resetMagic;
+    window.updateZodiacImages = updateZodiacImages; // 暴露給外部 API 呼叫
+
   </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
